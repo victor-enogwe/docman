@@ -1,28 +1,35 @@
 import dotenv                from 'dotenv';
 import path                  from 'path';
 import express               from 'express';
+import session               from 'express-session';
 import favicon               from 'serve-favicon';
 import logger                from 'morgan';
 import bodyParser            from 'body-parser';
+import cookieParser          from 'cookie-parser';
 import debug                 from 'debug';
 import http                  from 'http';
-import Sequelize             from 'sequelize';
-
-import Routes                from './server/routes/Routes';
+import passport              from 'passport';
+import db                    from './server/models/';
+import webpack               from 'webpack';
+import webpackDevMiddleware  from 'webpack-dev-middleware';
+import webpackHotMiddleware  from 'webpack-hot-middleware';
+import DashboardPlugin       from 'webpack-dashboard/plugin';
+import config                from './config/webpack.config';
+import Routes                from './server/controllers/routes/Routes';
 
 dotenv.config();
 debug('docman:server');
 
-const database = new Sequelize(process.env.DB, process.env.DB_USER, process.env.DB_PASS, {
-  host: 'localhost',
-  port: process.env.DB_PORT,
-  dialect: 'mysql'
-});
+const compiler = webpack(config);
+// Apply CLI dashboard for your webpack dev server
+compiler.apply(new DashboardPlugin());
 
 const app = express();
 
 /**
  * Normalize a port into a number, string, or false.
+ * @param {Number} val
+ * @returns {Number} a number representing the port
  */
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
@@ -38,6 +45,7 @@ const normalizePort = (val) => {
 
 /**
  * Event listener for HTTP server "error" event.
+ * @param {any} error
  */
 const onError = (error) => {
   if (error.syscall !== 'listen') {
@@ -73,49 +81,45 @@ const onListening = () => {
 
 const port = normalizePort(process.env.PORT || '3000');
 
-app.set('views', path.join(__dirname, 'client/views'));
+app.set('views', path.join(__dirname, 'server/views'));
 app.set('view engine', 'pug');
 app.set('port', port);
 
+app.use(webpackDevMiddleware(compiler, {
+  noInfo: true,
+  publicPath: config.output.publicPath,
+  stats: {
+    colors: true
+  },
+  historyApiFallback: true
+}));
+app.use(webpackHotMiddleware(compiler));
+app.use(session({  
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(favicon(__dirname + '/client/assets/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(cookieParser());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/assets')));
-app.use('/', Routes.home);
-app.use('/users', Routes.users);
-// app.use('/documents', Routes.documents);
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-if (app.get('env') === 'development') {
-  app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+app.use('/install', Routes.database);
+app.use('/api/v1/users/', Routes.users);
+app.use('/api/v1/documents', Routes.documents);
+// send everthing else to react
+app.use('*', Routes.home);
 
 const server = http.createServer(app);
 
 server.on('error', onError);
 server.on('listening', onListening);
 
-database.authenticate()
+db.sequelize
+  .authenticate()
   .then(err => server.listen(port))
   .catch(err => err);
 

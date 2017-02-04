@@ -1,10 +1,11 @@
 import express from 'express';
+import path    from 'path';
 
-const app = express.Router();
+const home = express.Router();
 
 /* GET home page. */
-app.get('/', function(req, res, next) {
+home.get('/', (req, res) => {
   res.render('index', { title: 'Document Manager' });
 });
 
-module.exports = app;
+export default home;
