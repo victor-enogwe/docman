@@ -1,0 +1,40 @@
+table.table { 
+  width: 100%;
+}
+
+.table th, .table td { 
+  text-align: left; 
+  padding: 0.25em;
+}
+
+tr.table-row { 
+  font-weight: normal;
+  color: #444;
+}
+
+tr.table-row:nth-child(even) { 
+  color: #333;
+  background-color:#DDD;
+}
+
+tr.header {
+  background-color: #FFEEDB;
+  font-size: 14px;
+  font-weight: bold;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+@media screen and (max-width: 800px) {
+  tr { 
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0.5em 0;
+    border: 1px solid rgba(3,3,3,0.2);
+  }
+  td, th {
+    flex: 1 1 150px;
+    border: 0.5px solid rgba(3,3,3,0.2);
+  }
+}
