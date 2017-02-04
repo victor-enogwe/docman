@@ -9,7 +9,7 @@ import cookieParser          from 'cookie-parser';
 import debug                 from 'debug';
 import http                  from 'http';
 import passport              from 'passport';
-import database              from './server/models';
+import db                    from './server/models/';
 import webpack               from 'webpack';
 import webpackDevMiddleware  from 'webpack-dev-middleware';
 import webpackHotMiddleware  from 'webpack-hot-middleware';
@@ -108,8 +108,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/assets')));
 app.use('/install', Routes.database);
-app.use('/users/', Routes.users);
-app.use('/documents', Routes.documents);
+app.use('/api/v1/users/', Routes.users);
+app.use('/api/v1/documents', Routes.documents);
 // send everthing else to react
 app.use('*', Routes.home);
 
@@ -118,7 +118,7 @@ const server = http.createServer(app);
 server.on('error', onError);
 server.on('listening', onListening);
 
-database.sequelize
+db.sequelize
   .authenticate()
   .then(err => server.listen(port))
   .catch(err => err);
