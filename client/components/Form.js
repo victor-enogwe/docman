@@ -3,7 +3,7 @@ import ReactDOM   from 'react-dom';
 import $          from 'jquery';
 import EventTable from './Table';
 import RaisedButton from 'material-ui/RaisedButton';
-import './form.css';
+import './form.scss';
 
 export default class Form extends React.Component {
   constructor() {

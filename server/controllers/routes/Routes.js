@@ -8,6 +8,6 @@ const Routes = {
   home,
   users,
   documents
-}
+};
 
 export default Routes;

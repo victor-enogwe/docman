@@ -14,7 +14,7 @@ import webpack               from 'webpack';
 import webpackDevMiddleware  from 'webpack-dev-middleware';
 import webpackHotMiddleware  from 'webpack-hot-middleware';
 import DashboardPlugin       from 'webpack-dashboard/plugin';
-import database              from './server/models';
+import db                    from './server/models/';
 import config                from './config/webpack.config';
 import Routes                from './server/controllers/routes/Routes';
 
@@ -106,22 +106,22 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(favicon(path.join(__dirname, 'client/assetsimages/favicon.ico')));
+app.use(favicon(path.join(__dirname, 'client/assets/images/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/assets')));
 app.use('/install', Routes.database);
-app.use('/users/', Routes.users);
-app.use('/documents', Routes.documents);
+app.use('/api/v1/users/', Routes.users);
+app.use('/api/v1/documents', Routes.documents);
 // send everthing else to react
 app.use('*', Routes.home);
 
 server.on('error', onError);
 server.on('listening', onListening);
 
-database.sequelize
+db.sequelize
   .authenticate()
   .then(() => server.listen(port))
   .catch(err => err);
