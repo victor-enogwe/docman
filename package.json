@@ -6,7 +6,7 @@
     "build": "webpack -w",
     "start": "npm-run-all --parallel serve",
     "test": "NODE_ENV=test mocha",
-    "serve": "webpack-dashboard --cyan -- babel-watch app.js",
+    "serve": "babel-watch app.js",
     "usermodels": "sequelize model:create --name Users --attributes 'username:string, firstname:string, lastname:string, roles:integer'",
     "documentmodels": "sequelize model:create --name Documents --attributes 'title:string, creator:string, excerpt:string, access:integer'",
     "migrate": "npm run usermodels && npm run documentmodels"

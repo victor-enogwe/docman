@@ -106,7 +106,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(favicon(path.join(__dirname, 'client/assetsimages/favicon.ico')));
+app.use(favicon(path.join(__dirname, 'client/assets/images/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
