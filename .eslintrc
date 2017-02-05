@@ -1,5 +1,6 @@
 {
   "root": true,
+  "extends": "airbnb-base",
   "parser": "babel-eslint",
   "plugins": ["react"],
   "env": {
@@ -39,6 +40,15 @@
     "no-param-reassign": 0,
     "comma-dangle": 0,
     "curly": [1, "multi-line"],
+    "no-multi-spaces": [2, {"exceptions": {"ImportDeclaration": true}}],
+    "import/no-extraneous-dependencies": [
+      "error", 
+      {
+        "devDependencies": true, 
+        "optionalDependencies": false, 
+        "peerDependencies": false
+      }
+    ],
     "no-shadow": [1, { "allow": ["req", "res", "err"] }],
     "react/prop-types": 1,
     "react/jsx-uses-react": 1,
