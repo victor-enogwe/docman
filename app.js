@@ -1,36 +1,36 @@
 import dotenv                from 'dotenv';
 import path                  from 'path';
 import express               from 'express';
-import session               from 'express-session';
-import favicon               from 'serve-favicon';
 import logger                from 'morgan';
 import Logger                from 'js-logger';
 import bodyParser            from 'body-parser';
-import cookieParser          from 'cookie-parser';
 import debug                 from 'debug';
 import http                  from 'http';
-import passport              from 'passport';
-import webpack               from 'webpack';
-import webpackDevMiddleware  from 'webpack-dev-middleware';
-import webpackHotMiddleware  from 'webpack-hot-middleware';
-import DashboardPlugin       from 'webpack-dashboard/plugin';
+import mysql                 from 'mysql';
+import bcrypt                from 'bcrypt-nodejs';
+import dbConfig             from './config/db.env.config';
 import db                    from './server/models/';
-import config                from './config/webpack.config';
 import Routes                from './server/controllers/routes/Routes';
 
 dotenv.config();
 debug('docman:server');
 Logger.useDefaults();
 
-const compiler = webpack(config);
-// Apply CLI dashboard for your webpack dev server
-compiler.apply(new DashboardPlugin());
-
 const app = express();
+const dbHost = dbConfig.host;
+const dbUser = dbConfig.user;
+const dbPassword = dbConfig.password;
+const database = dbConfig.database;
+const dbConnection = mysql.createConnection({
+  host: dbHost,
+  user: dbUser,
+  password: dbPassword
+});
+
 
 /**
  * Normalize a port into a number, string, or false.
- * @param {Number} val
+ * @param {Number} val a string or number port
  * @returns {Number} a number representing the port
  */
 const normalizePort = (val) => {
@@ -50,7 +50,7 @@ const server = http.createServer(app);
 
 /**
  * Event listener for HTTP server "error" event.
- * @param {any} error
+ * @param {any} error an error message
  * @returns {null} error already thrown
  */
 const onError = (error) => {
@@ -85,45 +85,63 @@ const onListening = () => {
     : `port ${addr.port}`;
   debug(`🚧 App is Listening on ${bind}`);
 };
+const headers1 = 'Origin, X-Requested-With, Content-Type, Accept';
+const headers2 = ',Authorization, Access-Control-Allow-Credentials';
 
 app.set('views', path.join(__dirname, 'server/views'));
 app.set('view engine', 'pug');
 app.set('port', port);
 
-app.use(webpackDevMiddleware(compiler, {
-  noInfo: true,
-  publicPath: config.output.publicPath,
-  stats: {
-    colors: true
-  },
-  historyApiFallback: true
-}));
-app.use(webpackHotMiddleware(compiler));
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(favicon(path.join(__dirname, 'client/assets/images/favicon.ico')));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PATCH');
+  res.header('Access-Control-Allow-Headers', `${headers1} ${headers2}`);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'client/assets')));
-app.use('/install', Routes.database);
+app.use(bodyParser.json());
 app.use('/api/v1/users/', Routes.users);
 app.use('/api/v1/documents', Routes.documents);
-// send everthing else to react
+app.use('/api/v1/search', Routes.search);
 app.use('*', Routes.home);
 
-server.on('error', onError);
 server.on('listening', onListening);
+server.on('error', onError);
 
-db.sequelize
-  .authenticate()
-  .then(() => server.listen(port))
-  .catch(err => err);
+dbConnection.connect();
 
-module.exports = app;
+dbConnection.query(`CREATE DATABASE IF NOT EXISTS ${database}`, (error) => {
+  dbConnection.end();
+  if (!error) {
+    db.sequelize
+    .sync()
+    .then(() => db.User.findOne({ where: {
+      $or: [{
+        username: process.env.ADMIN_USERNAME
+      }, { email: process.env.ADMIN_EMAIL }]
+    } }).then((userExists) => {
+      if (!userExists) {
+        return db.User.create({
+          id: 1,
+          roleId: 0,
+          username: process.env.ADMIN_USERNAME,
+          firstname: process.env.ADMIN_FIRSTNAME,
+          lastname: process.env.ADMIN_LASTNAME,
+          email: process.env.ADMIN_EMAIL,
+          password: process.env.ADMIN_PASSWORD,
+          password_confirmation: process.env.ADMIN_PASSWORD,
+          password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
+          bcrypt.genSaltSync(10)),
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        });
+      }
+    })
+    .then(() => server.listen(port)))
+    .catch(err => Logger.error(err));
+  }
+});
+
+export default app;
