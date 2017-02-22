@@ -1,27 +1,27 @@
 const dotenv = require('dotenv');
+
 dotenv.config();
 
 module.exports = {
   development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: `${process.env.DB_NAME}_dev`,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_TYPE
+    username: process.env.DEV_DB_USER,
+    password: process.env.DEV_DB_PASS,
+    database: process.env.DEV_DB_NAME,
+    host: process.env.DEV_DB_HOST,
+    dialect: process.env.DEV_DB_TYPE
   },
   test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: `${process.env.DB_NAME}_test`,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_TYPE
+    username: process.env.TEST_DB_USER,
+    password: process.env.TEST_DB_PASS,
+    database: process.env.TEST_DB_NAME,
+    host: process.env.TEST_DB_HOST,
+    dialect: process.env.TEST_DB_TYPE
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: `${process.env.DB_NAME}_prod`,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_TYPE
+    username: process.env.PROD_DB_USER,
+    password: process.env.PROD_DB_PASS,
+    database: process.env.PROD_DB_NAME,
+    host: process.env.PROD_DB_HOST,
+    dialect: process.env.PROD_DB_TYPE
   }
-}
-
+};
