@@ -1,30 +1,30 @@
-import Sequelize from 'sequelize';
-import fs        from 'fs';
-import path      from 'path';
+import Sequelize   from 'sequelize';
+import fs          from 'fs';
+import config      from '../../config/db.env.config';
 
-
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  dialect: process.env.DB_TYPE
+const host = config.host;
+const user = config.user;
+const password = config.password;
+const database = config.database;
+const port = config.port;
+const dialect = config.dialect;
+const db = {};
+const sequelize = new Sequelize(database, user, password, {
+  host, port, dialect, logging: false
 });
 
-const db        = {};
 
 fs
   .readdirSync(__dirname)
-  .filter(function(file) {
-    return (file.indexOf(".") !== 0) && (file !== "index.js");
-  })
-  .forEach(function(file) {
-    const model = sequelize.import(path.join(__dirname, file));
+  .filter(file => (file.indexOf('.') !== 0) && (file !== 'index.js'))
+  .forEach((file) => {
+    const model = sequelize.import('./' + file);
     db[model.name] = model;
   });
 
-Object.keys(db).forEach(function(modelName) {
-  if ("associate" in db[modelName]) {
-    db[modelName].associate(db);
-  }
+Object.keys(db).forEach((key) => {
+  const model = db[key];
+  if ('associate' in model) model.associate(db);
 });
 
 db.sequelize = sequelize;
