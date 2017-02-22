@@ -1,10 +1,6 @@
 import Sequelize from 'sequelize';
 import fs        from 'fs';
 import path      from 'path';
-import config    from '../../config/sequelize.config'
-import users     from './users';
-import documents from './documents';
-import dotenv    from 'dotenv';
 
 
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {

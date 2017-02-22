@@ -1,30 +1,17 @@
 import dotenv                from 'dotenv';
 import path                  from 'path';
 import express               from 'express';
-import session               from 'express-session';
-import favicon               from 'serve-favicon';
 import logger                from 'morgan';
 import Logger                from 'js-logger';
 import bodyParser            from 'body-parser';
-import cookieParser          from 'cookie-parser';
 import debug                 from 'debug';
-import http                  from 'http';
-import passport              from 'passport';
-import webpack               from 'webpack';
-import webpackDevMiddleware  from 'webpack-dev-middleware';
-import webpackHotMiddleware  from 'webpack-hot-middleware';
-import DashboardPlugin       from 'webpack-dashboard/plugin';
+import http                  from 'http';;
 import db                    from './server/models/';
-import config                from './config/webpack.config';
 import Routes                from './server/controllers/routes/Routes';
 
 dotenv.config();
 debug('docman:server');
 Logger.useDefaults();
-
-const compiler = webpack(config);
-// Apply CLI dashboard for your webpack dev server
-compiler.apply(new DashboardPlugin());
 
 const app = express();
 
@@ -86,36 +73,13 @@ const onListening = () => {
   debug(`🚧 App is Listening on ${bind}`);
 };
 
-app.set('views', path.join(__dirname, 'server/views'));
-app.set('view engine', 'pug');
 app.set('port', port);
 
-app.use(webpackDevMiddleware(compiler, {
-  noInfo: true,
-  publicPath: config.output.publicPath,
-  stats: {
-    colors: true
-  },
-  historyApiFallback: true
-}));
-app.use(webpackHotMiddleware(compiler));
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(favicon(path.join(__dirname, 'client/assets/images/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'client/assets')));
-app.use('/install', Routes.database);
 app.use('/api/v1/users/', Routes.users);
 app.use('/api/v1/documents', Routes.documents);
-// send everthing else to react
 app.use('*', Routes.home);
 
 server.on('error', onError);
