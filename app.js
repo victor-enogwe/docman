@@ -27,7 +27,6 @@ const dbConnection = mysql.createConnection({
   password: dbPassword
 });
 
-
 /**
  * Normalize a port into a number, string, or false.
  * @param {Number} val a string or number port
@@ -45,12 +44,8 @@ const normalizePort = (val) => {
   return false;
 };
 
-let port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
 const server = http.createServer(app);
-
-if (process.env.NODE_ENV === 'test') {
-  port = normalizePort(process.env.PORT || '4000');
-}
 
 /**
  * Event listener for HTTP server "error" event.
@@ -143,9 +138,13 @@ dbConnection.connect((err) => {
             });
           }
         })
-        .then(() => server.listen(port, () => {
-          Logger.warn(`🚧 App is Listening on ${port}`);
-        }))).catch(err => Logger.error(err));
+        .then(() => {
+          if (!module.parent) {
+            server.listen(port, () => {
+              Logger.warn(`🚧 App is Listening on ${port}`);
+            })
+          }
+        })).catch(err => Logger.error(err));
       }
     });
   } else {
@@ -154,3 +153,4 @@ dbConnection.connect((err) => {
 });
 
 export default app;
+
