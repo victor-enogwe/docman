@@ -1,70 +1,180 @@
-import models from '../../models/';
+import db          from '../../models/';
+import { encrypt } from '../middlewares/encrypt';
+import validate    from '../middlewares/validate';
 
-const Users = models.Users;
+const userModel = db.User;
 
+/**
+ * User controller object
+ */
 const User = {
+  /**
+   * User Method to create a new user
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
   create(req, res) {
-    Users.create(req.body)
-      .then(function (newUser) {
-        res.status(200).json(newUser);
-      })
-      .catch(function (error){
-        res.status(500).json(error);
-      });
+    return userModel.create(req.body)
+    .then(newUser => res.status(201)
+    .json({ success: true, message: validate.showUserDetails(newUser) }))
+    .catch(error => res.status(400).json({
+      success: false,
+      message: error.errors[0].message
+    }));
   },
+
+  /**
+   * User Method to update a user
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
   update(req, res) {
-    User.update(req.body, {
-      where: {
-        id: req.params.id
+    userModel.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          success: false,
+          message: 'User Not found'
+        });
       }
+      return user.update(req.body).then(userUpdated => res.status(201)
+      .json({
+        success: true,
+        message: validate.showUserDetails(userUpdated)
+      }));
     })
-    .then(function (updatedUserRecords) {
-      res.status(200).json(updatedUserRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+    .catch(error => res.status(500).json({
+      success: false,
+      message: error.errors[0].message
+    }));
   },
+
+  /**
+   * User Method to delete a user
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
   delete(req, res) {
-    User.destroy({
-      where: {
-        id: req.params.id
+    userModel.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          success: false,
+          message: `Delete Failed! User witn ìd:${req.params.id} Not found`
+        });
       }
+      return user.destroy()
+      .then(() => res.status(200).json({
+        message: `Delete Successful! User witn ìd:${req.params.id} deleted`
+      }));
     })
-    .then(function (deletedUserRecords) {
-      res.status(200).json(deletedUserRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+    .catch(error => res.status(500).json({ success: false, message: error }));
   },
+
+  /**
+   * User Method to find all users
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
   findAll(req, res) {
-     Users.findAll()
-      .then(function (users) {
-        res.status(200).json(users);
-      })
-      .catch(function (error) {
-        res.status(500).json({ error });
-      });
-  },
-  findOne(req, res) {
-    Users.findById(req.params.id)
-    .then(function (user) {
-      res.status(200).json(user);
+    userModel.findAndCountAll({
+      attributes: validate.filterUserDetails(),
+      offset: req.query.offset,
+      limit: req.query.limit,
     })
-    .catch(function (error){
-      res.status(500).json({ error });
-    });
+    .then((users) => {
+      if (users.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'no users found'
+        });
+      }
+      return res.status(200).json({ success: true, users });
+    })
+    .catch(error => res.status(500).json({
+      success: false,
+      message: error.errors
+    }));
   },
-  findDocuments(req, res) {
-    res.send('I am finding the users documents');
+
+  /**
+   * User Method to find one user
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
+  findOne(req, res) {
+    userModel.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'user not found'
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        user: validate.showUserDetails(user)
+      });
+    })
+    .catch(error => res.status(500).json({
+      success: false,
+      message: error.errors
+    }));
   },
+
+  /**
+   * User Method to authenticate a user
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
   login(req, res) {
-    res.send('I am logging a user in');
+    userModel.findOne({ where: {
+      $or: [{ username: req.body.username }, { email: req.body.email }]
+    } })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication failed! User not found.'
+        });
+      }
+      const authenticated = user.authenticate(req.body.password);
+      if (!authenticated[0]) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication failed! Wrong password.'
+        });
+      }
+      const authToken = encrypt(authenticated[1], user.password_digest);
+      return user.update({
+        auth_token: authToken
+      }).then(() => res.status(200).json({
+        success: true,
+        message: 'Enjoy your token!',
+        token: authenticated[1]
+      }));
+    })
+    .catch(error => res.status(500).json({ success: false, message: error }));
   },
+
+  /**
+   * User Method to un-authenticate a user
+   * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @returns {Object} response body
+   */
   logout(req, res) {
-    res.send('I am logging a user out');
+    userModel.findById(req.decoded.id)
+    .then(user => user.update({ auth_token: '' }).then(() => res.status(200)
+    .json({ success: true, message: 'you are now logged out' })))
+    .catch(error => res.status(401).json({ success: false, message: error }));
   }
-}
+};
 
 export default User;
