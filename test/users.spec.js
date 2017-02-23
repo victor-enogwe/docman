@@ -6,7 +6,7 @@ const app = supertest(helper.app);
 const testData = helper.testData;
 
 before((done) => {
-  db.sequelize.sync()
+  db.sequelize.authenticate()
   .then(() => {
     db.User.destroy({
       where: {
