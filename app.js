@@ -142,7 +142,7 @@ dbConnection.connect((err) => {
           if (!module.parent) {
             server.listen(port, () => {
               Logger.warn(`🚧 App is Listening on ${port}`);
-            })
+            });
           }
         })).catch(err => Logger.error(err));
       }
