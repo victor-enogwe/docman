@@ -10,6 +10,6 @@ engines:
     enabled: true
 ratings:
   paths:
-  - "**.js"
+  - []
 exclude_paths:
 - node_modules/**/*
