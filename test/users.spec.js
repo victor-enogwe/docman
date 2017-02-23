@@ -470,7 +470,7 @@ if regular user does not exist`, (done) => {
     });
 
     it('Should not allow a non-admin access other users data', (done) => {
-      app.get('/api/v1/users/1')
+      app.get(`/api/v1/users/${+regularUserId + 1}`)
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         response.status.should.equal(401);
