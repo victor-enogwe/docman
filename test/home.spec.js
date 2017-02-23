@@ -1,7 +1,6 @@
 import helper    from './helpers/index.helpers';
 
 const supertest = helper.supertest;
-const should = helper.should;
 const app = supertest(helper.app);
 
 describe('Home:', () => {
