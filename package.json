@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "build:dist": "NODE_ENV=production node app.js",
-    "build:dev": "NODE_ENV=development babel-watch app.js",
     "start": "babel-watch app.js",
-    "test": "NODE_ENV=test mocha --reporter spec --compilers js:babel-core/register test/**/*.spec.js",
-    "cover": "NODE_ENV=test istanbul cover _mocha -- test/**/*.spec.js --compilers js:babel-core/register"
+    "test": "NODE_ENV=test istanbul cover _mocha -- test/**/*.spec.js --compilers js:babel-core/register"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
