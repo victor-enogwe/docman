@@ -16,7 +16,7 @@ const showUserDetails = user => ({
 
 /**
  * Function to display user details
- * @param {String} user user object
+ * @param {String} document document object
  * @returns {Object} user
  */
 const showDocumentDetails = document => ({
@@ -91,7 +91,7 @@ const validateUserKeys = (request, isAdmin) => {
 /**
  * Function to validate request body keys
  * @param {Object} request request body object
- * @param {Boolean} isAdmin switch for when user is admin
+ * @param {Boolean} isUpdate switch for when user is admin
  * @returns {Object} array constaining validity and invalid keys
  */
 const validateDocumentKeys = (request, isUpdate) => {
