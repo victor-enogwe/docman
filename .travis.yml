@@ -25,3 +25,4 @@ script:
 
 after_success:
   - npm run coveralls
+  - CODECLIMATE_REPO_TOKEN=97820ec1037e3e15be97baa45c2272fc102869f331fbe3e175f9039a00b5d1be codeclimate-test-reporter < lcov.info
