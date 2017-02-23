@@ -5,7 +5,8 @@
   "scripts": {
     "build:dist": "NODE_ENV=production node app.js",
     "start": "babel-watch app.js",
-    "test": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register"
+    "test": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register",
+     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
