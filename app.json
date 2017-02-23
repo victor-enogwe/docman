@@ -1,0 +1,7 @@
+{
+  "name": "DOcument Management System",
+  "description": "A Document Management System API Built With NodeJs And Express",
+  "repository": "https://github.com/andela-venogwe/docman.git",
+  "logo": "https://cdn.vectorstock.com/i/composite/16,18/document-file-logo-vector-5271618.jpg",
+  "keywords": ["node", "express", "document manager", "Andela"]
+}
