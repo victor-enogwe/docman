@@ -482,7 +482,7 @@ if regular user does not exist`, (done) => {
     });
 
     it('Should allow an admin user access to fetch any user data', (done) => {
-      app.get('/api/v1/users/1')
+      app.get(`/api/v1/users/${regularUserId}`)
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         response.status.should.equal(200);
@@ -543,7 +543,7 @@ if regular user does not exist`, (done) => {
     });
 
     it('Should only allow user roleId update of 0 or 1 by admin', (done) => {
-      app.patch('/api/v1/users/1')
+      app.patch(`/api/v1/users/${regularUserId}`)
       .set({ 'x-access-token': adminUserToken })
       .send({ roleId: 3 })
       .end((error, response) => {

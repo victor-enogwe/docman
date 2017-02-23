@@ -114,8 +114,8 @@ app.use('*', Routes.home);
 server.on('listening', onListening);
 server.on('error', onError);
 
-dbConnection.connect((error) => {
-  if (!error) {
+dbConnection.connect((err) => {
+  if (!err) {
     dbConnection
     .query(`CREATE DATABASE IF NOT EXISTS ${database}`, (error) => {
       dbConnection.end(() => Logger.warn('Initial Database Connection CLosed'));
@@ -129,7 +129,6 @@ dbConnection.connect((error) => {
         } }).then((userExists) => {
           if (!userExists) {
             return db.User.create({
-              id: 1,
               roleId: 0,
               username: process.env.ADMIN_USERNAME,
               firstname: process.env.ADMIN_FIRSTNAME,
