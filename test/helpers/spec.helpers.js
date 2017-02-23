@@ -2,7 +2,7 @@ import faker  from 'faker';
 
 const testData = {
   validUser1: {
-    username: faker.internet.userName(),
+    username: 'ahmed',
     firstname: faker.name.firstName(),
     lastname: faker.name.lastName(),
     email: faker.internet.email(),
@@ -19,7 +19,7 @@ const testData = {
     menu: 'hey'
   },
   validUser2: {
-    username: faker.internet.userName(),
+    username: 'audu',
     firstname: faker.name.firstName(),
     lastname: faker.name.lastName(),
     email: faker.internet.email(),
@@ -27,7 +27,7 @@ const testData = {
     password_confirmation: 'fakeuserpass'
   },
   validUser3: {
-    username: faker.internet.userName(),
+    username: 'edena',
     firstname: faker.name.firstName(),
     lastname: faker.name.lastName(),
     email: faker.internet.email(),
@@ -35,7 +35,7 @@ const testData = {
     password_confirmation: 'fakeuserpass'
   },
   validUser4: {
-    username: faker.internet.userName(),
+    username: 'Bison',
     firstname: faker.name.firstName(),
     lastname: faker.name.lastName(),
     email: faker.internet.email(),
@@ -94,7 +94,7 @@ iammorethan20charactersofcoursedothidagainandagainandIthinkthi',
     password_confirmation: 'fakeuser'
   },
   invalidUser7: {
-    username: faker.internet.userName(),
+    username: 'deloite',
     firstname: 'e',
     lastname: faker.name.lastName(),
     email: faker.internet.email(),
@@ -102,7 +102,7 @@ iammorethan20charactersofcoursedothidagainandagainandIthinkthi',
     password_confirmation: 'fakeuser'
   },
   invalidUser8: {
-    username: faker.internet.userName(),
+    username: 'demiGod',
     firstname: 'ihavetoputin50charactersheresupercalifragilisticexpialidociou\
 iammorethan20charactersofcoursedothidagainandagainandIthinkthi',
     lastname: faker.name.lastName(),
@@ -127,12 +127,32 @@ iammorethan20charactersofcoursedothidagainandagainandIthinkthi',
     password_confirmation: 'fakeuser'
   },
   invalidUser11: {
-    username: faker.internet.userName(),
+    username: 'kareen',
     firstname: faker.name.firstName(),
     lastname: faker.name.lastName(),
-    email: 'a@y.c',
+    email: 'a@yahhoooooo',
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
+  },
+  invalidUser12: {
+    username: 'kareen',
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    email: `rNwj0DTYKDtgutzStfGsBpBiQK3ZZoM1eNlMBamT36Ee6wPrt6vZPgPMjrCurSpoFk\
+FCIqQQBoyrOh9D4zSzcKFAYoVY3LG9h8hTWuJo5nz6huPibG1pZJTgfzjNpWiAgO1GQZL94s8pwWkP\
+URfmReJYbjM5tV4wbJgg1XpCqJs5BYHR8xxceyErcbzrvyAngOyBsSKaIESk29cuhEQTHhMy0FuZ1l\
+SiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6ORw725yayXevXWLbAMp
+@yahoo.com`,
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  invalidUser13: {
+    username: 'kareen',
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    email: 'a@yahhoooooo',
+    password: 'fakeuser',
+    password_confirmation: ''
   },
   adminUser: {
     username: process.env.ADMIN_USERNAME,
