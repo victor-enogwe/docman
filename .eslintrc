@@ -42,7 +42,7 @@
     "no-multi-spaces": [2, {"exceptions": {"ImportDeclaration": true}}],
     "no-multi-str": 0,
     "import/no-extraneous-dependencies": [
-      "error", 
+      2, 
       {
         "devDependencies": true, 
         "optionalDependencies": false, 
