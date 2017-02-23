@@ -6,7 +6,7 @@ const app = supertest(helper.app);
 const testData = helper.testData;
 
 before((done) => {
-  db.sequelize.authenticate()
+  db.sequelize.sync()
   .then(() => {
     db.User.destroy({
       where: {
@@ -23,7 +23,7 @@ describe('Users:', () => {
   describe('Create Regular User', () => {
     it('Should return http code 201 if a Regular User is created', (done) => {
       app.post('/api/v1/users')
-      .send(testData.regularUser)
+      .send(regularUser)
       .end((error, response) => {
         regularUserId = response.body.message.id;
         response.status.should.equal(201);
@@ -49,9 +49,22 @@ describe('Users:', () => {
       });
     });
 
-    it('Should not allow duplicate username/email in the database', (done) => {
+    it('Should not allow duplicate username in the database', (done) => {
       app.post('/api/v1/users')
       .send(testData.validUser1)
+      .end((error, response) => {
+        response.status.should.equal(400);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal('Oops. There is an existing account with this username.');
+        done();
+      });
+    });
+
+    it('Should not allow duplicate email in the database', (done) => {
+      testData.validUser2.username = 'folashade';
+      app.post('/api/v1/users')
+      .send(testData.validUser2)
       .end((error, response) => {
         response.status.should.equal(400);
         response.body.success.should.equal(false);
@@ -186,15 +199,40 @@ be 3 - 40 characters long.');
       });
     });
 
-    it('Should only allow valid emails having more than 6 characters',
+    it('Should only allow valid emails',
     (done) => {
       app.post('/api/v1/users')
       .send(testData.invalidUser11)
       .end((error, response) => {
         response.status.should.equal(400);
         response.body.message.should
-        .equal(`Validation error: Validation isEmail failed,
-Validation error: Validation len failed`);
+        .equal('The email you entered is invalid.');
+        done();
+      });
+    });
+
+    it('Should only allow emails less than 254 characters',
+    (done) => {
+      app.post('/api/v1/users')
+      .send(testData.invalidUser12)
+      .end((error, response) => {
+        response.status.should.equal(400);
+        response.body.message.should
+        .equal('The email you entered is invalid  and longer \
+than 254 characters.');
+        done();
+      });
+    });
+
+    it('Should disallow user creation if password \
+confirmation is empty',
+    (done) => {
+      app.post('/api/v1/users')
+      .send(testData.invalidUser13)
+      .end((error, response) => {
+        response.status.should.equal(400);
+        response.body.message.should
+        .equal('Please confirm password');
         done();
       });
     });
@@ -435,10 +473,10 @@ if regular user does not exist`, (done) => {
       app.get('/api/v1/users/1')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        response.status.should.equal(403);
+        response.status.should.equal(401);
         response.body.success.should.equal(false);
         response.body.message.should
-        .equal('You don\'t have authorization to perform this action');
+        .equal('You don\'t have authorization for this action');
         done();
       });
     });
@@ -503,6 +541,19 @@ if regular user does not exist`, (done) => {
         done();
       });
     });
+
+    it('Should only allow user roleId update of 0 or 1 by admin', (done) => {
+      app.patch('/api/v1/users/1')
+      .set({ 'x-access-token': adminUserToken })
+      .send({ roleId: 3 })
+      .end((error, response) => {
+        response.status.should.equal(500);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal('roleId can only be 0 or 1');
+        done();
+      });
+    });
   });
 
   // get all users
@@ -525,15 +576,15 @@ if regular user does not exist`, (done) => {
       .end((error, response) => {
         response.status.should.equal(200);
         response.body.success.should.equal(true);
-        response.body.users.should.be.an.instanceOf(Array);
-        response.body.users[0].should.have.property('id');
-        response.body.users[0].should.have.property('username');
-        response.body.users[0].should.have.property('roleId');
-        response.body.users[0].should.have.property('firstname');
-        response.body.users[0].should.have.property('lastname');
-        response.body.users[0].should.have.property('email');
-        response.body.users[0].should.have.property('createdAt');
-        response.body.users[0].should.have.property('updatedAt');
+        response.body.users.rows.should.be.an.instanceOf(Array);
+        response.body.users.rows[0].should.have.property('id');
+        response.body.users.rows[0].should.have.property('username');
+        response.body.users.rows[0].should.have.property('roleId');
+        response.body.users.rows[0].should.have.property('firstname');
+        response.body.users.rows[0].should.have.property('lastname');
+        response.body.users.rows[0].should.have.property('email');
+        response.body.users.rows[0].should.have.property('createdAt');
+        response.body.users.rows[0].should.have.property('updatedAt');
         done();
       });
     });
@@ -612,22 +663,22 @@ fields are supplied`,
 
     it('Should Allow a User Update his profile if he has a valid Token',
     (done) => {
-      const newFirstName = 'newName';
-      app.put(`/api/users/${regularUserId}`)
-      .send({
-        firstName: newFirstName
-      })
+      const firstname = 'newName';
+      app.patch(`/api/v1/users/${regularUserId}`)
       .set({ 'x-access-token': regularUserToken })
+      .send({
+        firstname
+      })
       .end((error, response) => {
-        response.status.should.equal(200);
-        response.body.firstname.should.equal('newFirstName');
+        response.status.should.equal(201);
+        response.body.message.firstname.should.equal('newname');
         done();
       });
     });
 
     it('Should NOT allow a User update his profile without a Valid Token',
     (done) => {
-      app.put(`/api/users/${regularUserId}`)
+      app.patch(`/api/v1/users/${regularUserId}`)
       .set({ 'x-access-token': 'invalidToken' })
       .end((error, response) => {
         response.status.should.equal(401);
