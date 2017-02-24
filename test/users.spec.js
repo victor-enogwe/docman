@@ -40,9 +40,7 @@ describe('Users:', () => {
         response.body.message.should.have.property('id');
         response.body.message.should.have.property('roleId').equal(1);
         response.body.message.should.have.property('email');
-        response.body.message.should.have.property('createdAt');
         response.body.message.should.have.property('username');
-        response.body.message.should.have.property('updatedAt');
         response.body.message.should.have.property('firstname');
         response.body.message.should.have.property('lastname');
         done();
@@ -493,8 +491,6 @@ if regular user does not exist`, (done) => {
         response.body.user.should.have.property('firstname');
         response.body.user.should.have.property('lastname');
         response.body.user.should.have.property('email');
-        response.body.user.should.have.property('createdAt');
-        response.body.user.should.have.property('updatedAt');
         done();
       });
     });
@@ -512,8 +508,6 @@ if regular user does not exist`, (done) => {
         response.body.user.should.have.property('firstname');
         response.body.user.should.have.property('lastname');
         response.body.user.should.have.property('email');
-        response.body.user.should.have.property('createdAt');
-        response.body.user.should.have.property('updatedAt');
         done();
       });
     });
@@ -583,8 +577,6 @@ if regular user does not exist`, (done) => {
         response.body.users.rows[0].should.have.property('firstname');
         response.body.users.rows[0].should.have.property('lastname');
         response.body.users.rows[0].should.have.property('email');
-        response.body.users.rows[0].should.have.property('createdAt');
-        response.body.users.rows[0].should.have.property('updatedAt');
         done();
       });
     });
