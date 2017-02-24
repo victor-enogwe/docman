@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt-nodejs';
 import jwt    from 'jsonwebtoken';
+import validate    from '../middlewares/validate';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -143,8 +144,7 @@ than 254 characters.');
        * @returns {String} jwt token
        */
       generateToken() {
-        const user = this.dataValues;
-        delete user.auth_token;
+        const user = validate.showUserDetails(this.dataValues);
         return jwt.sign(user, process.env.JWT_SECRET, {
           expiresIn: 86400
         });
