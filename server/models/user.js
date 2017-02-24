@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt-nodejs';
 import jwt    from 'jsonwebtoken';
-import validate    from '../middlewares/validate';
+import validate    from '../controllers/middlewares/validate';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
