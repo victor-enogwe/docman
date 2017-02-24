@@ -9,9 +9,7 @@ const showUserDetails = user => ({
   firstname: user.firstname,
   lastname: user.lastname,
   email: user.email,
-  roleId: user.roleId,
-  createdAt: user.createdAt,
-  updatedAt: user.updatedAt
+  roleId: user.roleId
 });
 
 /**
