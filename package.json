@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build:dist": "NODE_ENV=production node app.js",
-    "start": "babel-watch app.js",
+    "build:dist": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./tests,./coverage,",
+    "start:dev": "babel-watch app.js",
+    "start": "npm run build:dist && node dist/app.js",
     "test:watch": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register --watch",
     "test": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
