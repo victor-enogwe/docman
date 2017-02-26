@@ -128,6 +128,10 @@ than 254 characters.');
       }
     }
   }, {
+    indexes: [
+      // add a FULLTEXT index
+      { type: 'FULLTEXT', name: 'Users_Index', fields: ['username', 'email'] }
+    ],
     classMethods: {
       associate(models) {
         User.hasMany(models.Document, {
@@ -157,8 +161,10 @@ than 254 characters.');
        */
       authenticate(password) {
         const auth = bcrypt.compareSync(password, this.password_digest);
+        let token = this.generateToken();
+        token = validate.encryptJwt(token);
         if (auth) {
-          return [true, this.generateToken()];
+          return [true, token];
         }
         return [false, null];
       }
