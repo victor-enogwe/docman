@@ -71,7 +71,11 @@ export default (sequelize, DataTypes) => {
   }, {
     indexes: [
       // add a FULLTEXT index
-      { type: 'FULLTEXT', name: 'Search_Index', fields: ['title', 'excerpt'] }
+      {
+        type: 'FULLTEXT',
+        name: 'Documents_Index',
+        fields: ['title', 'excerpt']
+      }
     ],
     classMethods: {
       associate(models) {
