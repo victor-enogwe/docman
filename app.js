@@ -101,10 +101,10 @@ app.use((req, res, next) => {
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use('/', Routes.home);
 app.use('/api/v1/users/', Routes.users);
 app.use('/api/v1/documents', Routes.documents);
 app.use('/api/v1/search', Routes.search);
-app.use('*', Routes.home);
 
 server.on('listening', onListening);
 server.on('error', onError);

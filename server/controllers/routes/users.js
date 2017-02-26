@@ -5,8 +5,6 @@ import auth     from '../middlewares/auth';
 const users = express.Router();
 
 users.post('/', auth.isValidUserCreateBody, User.create);
-users.post('/login', auth.isValidLoginBody, User.login);
-users.post('/logout', auth.checkToken, User.logout);
 
 users.get('/', auth.checkToken, auth.isAdmin, auth.setQueryParameters,
 User.findAll);
