@@ -68,6 +68,7 @@ const User = {
       }
       return user.destroy()
       .then(() => res.status(200).json({
+        success: true,
         message: `Delete Successful! User witn ìd:${req.params.id} deleted`
       }));
     })
