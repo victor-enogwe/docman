@@ -49,7 +49,7 @@ module.exports = {
       'Document',
       ['title', 'excerpt'],
       {
-        indexName: 'Search_Index',
+        indexName: 'Documents_Index',
         indicesType: 'FULLTEXT'
       }
     );
