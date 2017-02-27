@@ -42,6 +42,30 @@ const testData = {
     password: 'fakeuserpass',
     password_confirmation: 'fakeuserpass'
   },
+  validUser5: {
+    username: 'Major',
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: 'fakeuserpass',
+    password_confirmation: 'fakeuserpass'
+  },
+  validUser6: {
+    username: 'aurora',
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: 'fakeuserpass',
+    password_confirmation: 'fakeuserpass'
+  },
+  validUser7: {
+    username: 'lekan',
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: 'fakeuserpass',
+    password_confirmation: 'fakeuserpass'
+  },
   invalidUser1: {
     username: faker.internet.userName(),
     firstname: faker.name.firstName(),
@@ -297,11 +321,18 @@ SiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6ORw725yayXevXWLbAMp
   //   roleId: 2
   // },
   // // Note before using thise documents, a ownerId property should be added
-  // documentRole1: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'role',
-  //   content: faker.lorem.paragraph()
-  // },
+  validUser6Document: {
+    title: faker.company.catchPhrase(),
+    excerpt: faker.lorem.sentence(),
+    access: 'private',
+    content: faker.lorem.paragraph()
+  },
+  invalidUser6Document: {
+    title: faker.company.catchPhrase(),
+    excerpt: faker.lorem.sentence(),
+    access: 'private',
+    content: faker.lorem.paragraph()
+  },
   // documentPrivate1: {
   //   title: faker.company.catchPhrase(),
   //   access: 'private',

@@ -1,20 +1,19 @@
-import db        from '../server/models/index';
 import helper    from './helpers/index.helpers';
+import db        from '../server/models/index';
 
-const supertest = helper.supertest;
-const app = supertest(helper.app);
+const app = helper.app;
 const testData = helper.testData;
 
-before((done) => {
-  db.sequelize.authenticate()
-  .then(() => {
-    db.User.destroy({
-      where: {
-        roleId: 1
-      }
-    }).then(() => done());
-  });
-});
+// before((done) => {
+//   db.sequelize.sync()
+//   // .then(() => {
+//   //   db.User.destroy({
+//   //     where: {
+//   //       roleId: 1
+//   //     }
+//   //   }).then(() => done());
+//   // });
+// });
 
 describe('Users:', () => {
   const regularUser = testData.validUser1;
@@ -31,15 +30,23 @@ describe('Users:', () => {
       });
     });
 
-    it('Should be be successful and return created user details', (done) => {
+    it('Should be be successful and ensure that new user has a roleId',
+    (done) => {
       app.post('/api/v1/users')
       .send(testData.validUser2)
       .end((error, response) => {
         response.body.success.should.equal(true);
-        response.body.message.roleId.should.equal(1);
-        response.body.message.should.have.property('id');
         response.body.message.should.have.property('roleId').equal(1);
-        response.body.message.should.have.property('email');
+        done();
+      });
+    });
+
+    it('Should ensure that new user has a username, firstname and lastname',
+    (done) => {
+      app.post('/api/v1/users')
+      .send(testData.validUser5)
+      .end((error, response) => {
+        response.body.success.should.equal(true);
         response.body.message.should.have.property('username');
         response.body.message.should.have.property('firstname');
         response.body.message.should.have.property('lastname');
@@ -92,7 +99,7 @@ password confirmation`,
       .send(testData.invalidUser2)
       .end((error, response) => {
         const badKeys = '( usernam,hacked,firstnam,passw )';
-        response.status.should.equal(409);
+        response.status.should.equal(400);
         response.body.success.should.equal(false);
         response.body.message.should
         .equal(`badly formatted request body including ${badKeys}`);
@@ -115,7 +122,7 @@ password confirmation`,
       app.post('/api/v1/users')
       .send(testData.invalidUser4)
       .end((error, response) => {
-        response.status.should.equal(409);
+        response.status.should.equal(400);
         response.body.success.should.equal(false);
         response.body.message.should
         .equal('badly formatted request body including ( roleId )');
@@ -262,7 +269,7 @@ the created Regular User`, (done) => {
 
   describe('Login', () => {
     it('Should allow login for admin user with valid credentials', (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: adminUser.email,
         password: adminUser.password
@@ -275,7 +282,7 @@ the created Regular User`, (done) => {
     });
 
     it('Should disallow login for invalid admin user password', (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: adminUser.email,
         password: 'invalidpassword'
@@ -290,7 +297,7 @@ the created Regular User`, (done) => {
 
     it(`Should fail with message 'Authentication failed. User not found'.
 if admin user does not exist`, (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         username: '00p',
         password: 'invalidpassword'
@@ -305,7 +312,7 @@ if admin user does not exist`, (done) => {
 
     it('Should allow either username or passowrd login, not both for admin',
     (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         username: adminUser.username,
         email: adminUser.email,
@@ -321,7 +328,41 @@ if admin user does not exist`, (done) => {
 
     it('Should return a token if the admin user login is successful',
     (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
+      .send({
+        email: adminUser.email,
+        password: adminUser.password
+      })
+      .end((error, response) => {
+        adminUserToken = response.body.token;
+        response.status.should.equal(200);
+        response.body.message.should.equal('Enjoy your token!');
+        response.body.should.have.property('token').which.is.a.String();
+        response.body.token.length.should.be.above(1);
+        done();
+      });
+    });
+
+    it('Should allow admin login with username',
+    (done) => {
+      app.post('/login')
+      .send({
+        username: adminUser.username,
+        password: adminUser.password
+      })
+      .end((error, response) => {
+        adminUserToken = response.body.token;
+        response.status.should.equal(200);
+        response.body.message.should.equal('Enjoy your token!');
+        response.body.should.have.property('token').which.is.a.String();
+        response.body.token.length.should.be.above(1);
+        done();
+      });
+    });
+
+    it('Should allow admin login with email',
+    (done) => {
+      app.post('/login')
       .send({
         email: adminUser.email,
         password: adminUser.password
@@ -337,7 +378,7 @@ if admin user does not exist`, (done) => {
     });
 
     it('Should not return a token if admin user login fails', (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: adminUser.email,
         password: 'invaidpassword'
@@ -350,9 +391,9 @@ if admin user does not exist`, (done) => {
       });
     });
 
-    it('Should allow login for a regular user with valid credentials',
+    it('Should allow login for a regular user with email',
     (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: regularUser.email,
         password: regularUser.password
@@ -364,8 +405,22 @@ if admin user does not exist`, (done) => {
       });
     });
 
+    it('Should allow login for a regular user with username',
+    (done) => {
+      app.post('/login')
+      .send({
+        username: regularUser.username,
+        password: regularUser.password
+      })
+      .end((error, response) => {
+        response.status.should.equal(200);
+        response.body.success.should.equal(true);
+        done();
+      });
+    });
+
     it('Should disallow login for invalid regular user password', (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: regularUser.email,
         password: 'invalidpassword'
@@ -380,7 +435,7 @@ if admin user does not exist`, (done) => {
 
     it(`Should fail with message 'Authentication failed. User not found'.
 if regular user does not exist`, (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         username: '00p',
         password: 'invalidpassword'
@@ -395,7 +450,7 @@ if regular user does not exist`, (done) => {
 
     it('Should allow username or passowrd login, not both for regular users',
     (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         username: regularUser.username,
         email: regularUser.email,
@@ -411,7 +466,7 @@ if regular user does not exist`, (done) => {
 
     it('Should return a token if the regular user login is successful',
     (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: regularUser.email,
         password: regularUser.password
@@ -427,7 +482,7 @@ if regular user does not exist`, (done) => {
     });
 
     it('Should not return a token if regular user login fails', (done) => {
-      app.post('/api/v1/users/login')
+      app.post('/login')
       .send({
         email: regularUser.email,
         password: 'invaidpassword'
@@ -457,7 +512,7 @@ if regular user does not exist`, (done) => {
     it('Should not allow access to users data without a valid token',
     (done) => {
       app.get('/api/v1/users/1')
-      .set({ 'x-access-token': 'regularUserToken' })
+      .set({ 'x-access-token': 'regular.User.Token' })
       .end((error, response) => {
         response.status.should.equal(401);
         response.body.success.should.equal(false);
@@ -535,19 +590,6 @@ if regular user does not exist`, (done) => {
         done();
       });
     });
-
-    it('Should only allow user roleId update of 0 or 1 by admin', (done) => {
-      app.patch(`/api/v1/users/${regularUserId}`)
-      .set({ 'x-access-token': adminUserToken })
-      .send({ roleId: 3 })
-      .end((error, response) => {
-        response.status.should.equal(500);
-        response.body.success.should.equal(false);
-        response.body.message.should
-        .equal('roleId can only be 0 or 1');
-        done();
-      });
-    });
   });
 
   // get all users
@@ -556,7 +598,7 @@ if regular user does not exist`, (done) => {
       app.get('/api/v1/users/')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        response.status.should.equal(403);
+        response.status.should.equal(401);
         response.body.success.should.equal(false);
         response.body.message.should
         .equal('You don\'t have authorization to perform this action');
@@ -582,7 +624,7 @@ if regular user does not exist`, (done) => {
     });
   });
 
-  describe('Update User', () => {
+  describe('Update User: ', () => {
     it('Should not allow user update if an invalid id is supplied',
   (done) => {
     app.patch('/api/v1/users/fffa')
@@ -596,6 +638,20 @@ if regular user does not exist`, (done) => {
       done();
     });
   });
+
+    it('Should not allow user update if the user does not exist',
+    (done) => {
+      app.patch('/api/v1/users/10000000')
+      .set({ 'x-access-token': adminUserToken })
+      .send(testData.validUser1Update)
+      .end((error, response) => {
+        response.status.should.equal(404);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal('User Not found');
+        done();
+      });
+    });
 
     it('Should not allow user update if an invalid token is supplied',
   (done) => {
@@ -678,12 +734,93 @@ fields are supplied`,
         done();
       });
     });
+
+
+    it('Should only allow user roleId update of 0 or 1 by admin', (done) => {
+      app.patch(`/api/v1/users/${regularUserId}`)
+      .set({ 'x-access-token': adminUserToken })
+      .send({ roleId: 3 })
+      .end((error, response) => {
+        response.status.should.equal(500);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal('roleId can only be 0 or 1');
+        done();
+      });
+    });
+  });
+
+  describe('Delete User: ', () => {
+    it('Should not allow a non-admin user to delete a user',
+    (done) => {
+      app.delete(`/api/v1/users/${regularUserId}`)
+      .set({ 'x-access-token': regularUserToken })
+      .end((error, response) => {
+        response.status.should.equal(401);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal('You don\'t have authorization to perform this action');
+        done();
+      });
+    });
+
+    it('Should not allow a user with an in-Valid token delete another user',
+    (done) => {
+      app.delete(`/api/v1/users/${regularUserId}`)
+      .set({ 'x-access-token': 'invalidToken' })
+      .end((error, response) => {
+        response.status.should.equal(401);
+        response.body.success.should.equal(false);
+        response.body.message.should.equal('Failed to authenticate token.');
+        done();
+      });
+    });
+
+    it('Should allow an admin user with a valid token to delete any user',
+    (done) => {
+      app.delete(`/api/v1/users/${regularUserId + 1}`)
+      .set({ 'x-access-token': adminUserToken })
+      .end((error, response) => {
+        response.status.should.equal(200);
+        response.body.success.should.equal(true);
+        response.body.message.should
+        .equal(`Delete Successful! User witn ìd:${regularUserId + 1} deleted`);
+        done();
+      });
+    });
+
+    it('Should allow the deletion of the default admin account',
+    (done) => {
+      app.delete('/api/v1/users/1')
+      .set({ 'x-access-token': adminUserToken })
+      .end((error, response) => {
+        response.status.should.equal(403);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal('You cannot delete the default admin account');
+        done();
+      });
+    });
+
+    it('Should return a user does not exist message if admin tries to \
+delete a non existing user', (done) => {
+      app.delete(`/api/v1/users/${regularUserId + 10000}`)
+      .set({ 'x-access-token': adminUserToken })
+      .end((error, response) => {
+        response.status.should.equal(404);
+        response.body.success.should.equal(false);
+        response.body.message.should
+        .equal(`Delete Failed! User witn ìd:${regularUserId + 10000} \
+Not found`);
+        done();
+      });
+    });
   });
 
   describe('Logout', () => {
     it('should successfully logout an admin User with a valid token',
     (done) => {
-      app.post('/api/v1/users/logout')
+      app.post('/logout')
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         response.status.should.equal(200);
@@ -695,7 +832,7 @@ fields are supplied`,
 
     it('should successfully logout a regular User with a valid token',
     (done) => {
-      app.post('/api/v1/users/logout')
+      app.post('/logout')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         response.status.should.equal(200);
@@ -707,7 +844,7 @@ fields are supplied`,
 
     it('should fail to logout a user with an invalid token',
     (done) => {
-      app.post('/api/v1/users/logout')
+      app.post('/logout')
       .set({ 'x-access-token': 'invalidtoken' })
       .end((error, response) => {
         response.status.should.equal(401);
@@ -728,64 +865,5 @@ fields are supplied`,
       });
     });
   });
-
-  // describe('Delete User', () => {
-  //   it('Should NOT allow a Non-Admin User delete a User',
-  //   (done) => {
-  //     server.delete(`/api/users/${regularUserId}`)
-  //     .set({ 'x-access-token': regularUserToken })
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(403);
-  //       expect(response.body.success).to.equal(false);
-  //       done();
-  //     });
-  //   });
-
-  //   it('Should NOT allow a User with In-Valid Token delete another User',
-  //   (done) => {
-  //     server.delete(`/api/users/${regularUserId}`)
-  //     .set({ 'x-access-token': 'invalidToken' })
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(401);
-  //       expect(response.body.success).to.equal(false);
-  //       done();
-  //     });
-  //   });
-
-  //   it('Should allow an Admin user with Valid Token delete another User',
-  //   (done) => {
-  //     server.delete(`/api/users/${regularUserId}`)
-  //     .set({ 'x-access-token': adminUserToken })
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(200);
-  //       expect(response.body.success).to.equal(true);
-  //       done();
-  //     });
-  //   });
-
-  //   it('Should NOT allow an Admin user with InValid
-  // Token delete another User',
-  //   (done) => {
-  //     server.delete(`/api/users/${regularUserId}`)
-  //     .set({ 'x-access-token': 'invalid token' })
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(401);
-  //       expect(response.body.success).to.equal(false);
-  //       done();
-  //     });
-  //   });
-
-  //   it(`Should NOT allow an Admin user with Valid
-  // Token delete a User that does
-  //   not exist`, (done) => {
-  //     server.delete(`/api/users/${regularUserId + 10000}`)
-  //     .set({ 'x-access-token': adminUserToken })
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(404);
-  //       expect(response.body.success).to.equal(false);
-  //       done();
-  //     });
-  //   });
-  // });
 });
 
