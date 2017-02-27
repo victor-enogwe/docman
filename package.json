@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build:dist": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./tests,./coverage,",
-    "rundev": "babel-watch app.js",
+    "dev": "babel-watch app.js",
     "start": "npm run build:dist && node dist/app.js",
-    "test:watch": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register --watch",
-    "test": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register",
+    "test:watch": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register --timeout 10000 --watch",
+    "test": "NODE_ENV=test istanbul cover _mocha -- test/*.spec.js --compilers js:babel-core/register --timeout 10000",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
