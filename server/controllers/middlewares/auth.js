@@ -15,8 +15,9 @@ export default {
    */
   checkToken(req, res, next) {
     // check header or url parameters or post parameters for token
-    const token = req.body.token || req.query.token ||
+    let token = req.body.token || req.query.token ||
     req.headers['x-access-token'];
+    token = validate.decryptJwt(token);
     // decode token
     if (!token) {
       return res.status(403).send({
@@ -34,7 +35,7 @@ export default {
       }
       return userModel.findById(decoded.id).then((user) => {
         if (!user) {
-          return res.status(401).json({
+          return res.status(404).json({
             success: false,
             message: 'This user does not exist anymore.'
           });
@@ -44,7 +45,8 @@ export default {
             message: 'you need to login.'
           });
         }
-        const decryptedToken = decrypt(user.auth_token, user.password_digest);
+        let decryptedToken = decrypt(user.auth_token, user.password_digest);
+        decryptedToken = validate.decryptJwt(decryptedToken);
         if (token !== decryptedToken) {
           return res.status(401).json({
             success: false,
@@ -65,7 +67,7 @@ export default {
    */
   isAdmin(req, res, next) {
     if (req.decoded.roleId !== 0) {
-      return res.status(403).send({
+      return res.status(401).send({
         success: false,
         message: 'You don\'t have authorization to perform this action' });
     }
@@ -80,7 +82,7 @@ export default {
    * @returns {Object} validity response
    */
   dontDeleteDefaultAdmin(req, res, next) {
-    if (parseInt(req.params.id, 10) === 0) {
+    if (parseInt(req.params.id, 10) === 1) {
       return res.status(403).send({
         success: false,
         message: 'You cannot delete the default admin account' });
@@ -132,7 +134,7 @@ export default {
   isValidUserCreateBody(req, res, next) {
     const isValidRequestBody = validate.validateUserKeys(req.body);
     if (!isValidRequestBody[0]) {
-      return res.status(409).json({
+      return res.status(400).json({
         success: false,
         message:
         `badly formatted request body including ( ${isValidRequestBody[1]} )`
@@ -151,7 +153,7 @@ export default {
   isValidDocumentCreateBody(req, res, next) {
     const isValidRequestBody = validate.validateDocumentKeys(req.body);
     if (!isValidRequestBody[0]) {
-      return res.status(409).json({
+      return res.status(400).json({
         success: false,
         message:
         `badly formatted request body including ( ${isValidRequestBody[1]} )`
@@ -192,7 +194,7 @@ export default {
   isValidDocumentUpdateBody(req, res, next) {
     const isValidRequestBody = validate.validateDocumentKeys(req.body, true);
     if (!isValidRequestBody[0]) {
-      return res.status(409).json({
+      return res.status(400).json({
         success: false,
         message:
         `badly formatted request body including ( ${isValidRequestBody[1]} )`

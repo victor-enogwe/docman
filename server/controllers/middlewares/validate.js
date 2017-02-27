@@ -38,9 +38,7 @@ const filterUserDetails = () => ([
   'firstname',
   'lastname',
   'email',
-  'roleId',
-  'createdAt',
-  'updatedAt'
+  'roleId'
 ]);
 
 /**
@@ -53,6 +51,7 @@ const filterDocumentDetails = () => ([
   'title',
   'excerpt',
   'content',
+  'access',
   'createdAt',
   'updatedAt'
 ]);
@@ -115,12 +114,78 @@ const validateDocumentKeys = (request, isUpdate) => {
   return [validity, badRequestBodyKeys];
 };
 
+const filterDocumentsByAccess = (access) => {
+  const accepted = ['public', 'private', 'users'];
+  if (accepted.includes(access)) {
+    return access;
+  }
+  return undefined;
+};
+
+const uniqueArray = array => array
+.filter((value, index) => array.indexOf(value) === index);
+
+const jwtEncode = () => {
+  const jwtSecret = process.env.JWT_SECRET.replace(/\s/g, '');
+  const secret = uniqueArray(jwtSecret.split('').reverse());
+  const jwtDict = {};
+  uniqueArray(jwtSecret.split('')).forEach((element, index) => {
+    jwtDict[element] = secret[index];
+  });
+  return jwtDict;
+};
+
+const encryptJwt = (token) => {
+  const dict = jwtEncode();
+  token = token.split('.');
+  return `${token[0]}.${token[1].split('').map((key) => {
+    if (dict[key]) {
+      return dict[key];
+    }
+    return key;
+  })
+  .join('')}.${token[2]}`;
+};
+
+
+const swap = (json) => {
+  const reverseJson = {};
+  if (typeof json === 'object') {
+    for (const key in json) {
+      if (key) reverseJson[json[key]] = key;
+    }
+    return reverseJson;
+  }
+  return {};
+};
+
+const decryptJwt = (reverseToken) => {
+  if (reverseToken) {
+    if (reverseToken.split('.').length === 3) {
+      const reverseDict = swap(jwtEncode());
+      reverseToken = reverseToken.split('.');
+      return `${reverseToken[0]}.${reverseToken[1].split('')
+      .map((character) => {
+        if (reverseDict[character]) {
+          return reverseDict[character];
+        }
+        return character;
+      }).join('')}.${reverseToken[2]}`;
+    }
+    return reverseToken;
+  }
+  return '';
+};
+
 export default {
   showUserDetails,
   showDocumentDetails,
   filterUserDetails,
   filterDocumentDetails,
   validateUserKeys,
-  validateDocumentKeys
+  validateDocumentKeys,
+  filterDocumentsByAccess,
+  encryptJwt,
+  decryptJwt
 };
 
