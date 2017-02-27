@@ -94,9 +94,7 @@ export default (sequelize, DataTypes) => {
           'gi'
         );
 
-        if (regexHtml.test(document.title)) {
-          throw new Error('Document title contains dissallowed markup');
-        } else if (regexHtml.test(document.excerpt)) {
+        if (regexHtml.test(document.excerpt)) {
           throw new Error('Document excerpt contains dissallowed markup');
         } else if (regexContent.test(document.content)) {
           throw new Error('Document content contains dissallowed markup');
