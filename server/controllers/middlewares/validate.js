@@ -150,13 +150,11 @@ const encryptJwt = (token) => {
 
 const swap = (json) => {
   const reverseJson = {};
-  if (typeof json === 'object') {
-    for (const key in json) {
-      if (key) reverseJson[json[key]] = key;
-    }
-    return reverseJson;
-  }
-  return {};
+  const keys = Object.keys(json);
+  keys.forEach((key) => {
+    reverseJson[json[key]] = key;
+  });
+  return reverseJson;
 };
 
 const decryptJwt = (reverseToken) => {
