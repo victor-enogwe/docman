@@ -129,14 +129,14 @@ than 254 characters.');
     }
   }, {
     indexes: [
-      // add a FULLTEXT index
       { type: 'FULLTEXT', name: 'Users_Index', fields: ['username', 'email'] }
     ],
     classMethods: {
       associate(models) {
         User.hasMany(models.Document, {
           foreignKey: 'creatorId',
-          onDelete: 'CASCADE'
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
         });
       }
     },
@@ -171,7 +171,7 @@ than 254 characters.');
     },
 
     freezeTableName: true,
-    // paranoid: true
+    paranoid: true
   });
   return User;
 };
