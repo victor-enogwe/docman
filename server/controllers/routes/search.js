@@ -8,4 +8,5 @@ search.use(auth.checkToken, auth.setQueryParameters);
 
 search.get('/documents', Search.searchDocuments);
 search.get('/users', auth.isAdmin, Search.searchUsers);
+
 export default search;

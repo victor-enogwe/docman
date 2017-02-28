@@ -8,7 +8,8 @@ export default (sequelize, DataTypes) => {
           args: /\d+/i,
           msg: 'creatorId must be a number'
         }
-      }
+      },
+      defaultValue: 1
     },
     title: {
       allowNull: false,
@@ -81,7 +82,8 @@ export default (sequelize, DataTypes) => {
       associate(models) {
         Document.belongsTo(models.User, {
           foreignKey: 'creatorId',
-          onDelete: 'CASCADE'
+          onUpdate: 'NO ACTION',
+          onDelete: 'NO ACTION'
         });
       },
       validateContent(document) {
@@ -110,7 +112,7 @@ export default (sequelize, DataTypes) => {
       }
     },
     freezeTableName: true,
-    // paranoid: true
+    paranoid: true
   });
 
   return Document;
