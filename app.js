@@ -113,38 +113,41 @@ dbConnection.connect((err) => {
   if (!err) {
     dbConnection
     .query(`CREATE DATABASE IF NOT EXISTS ${database}`, (error) => {
-      dbConnection.end(() => Logger.warn('Initial Database Connection CLosed'));
       if (!error) {
-        db.sequelize
-        .sync()
-        .then(() => db.User.findOne({ where: {
-          $or: [{
-            username: process.env.ADMIN_USERNAME
-          }, { email: process.env.ADMIN_EMAIL }]
-        } }).then((userExists) => {
-          if (!userExists) {
-            return db.User.create({
-              roleId: 0,
-              username: process.env.ADMIN_USERNAME,
-              firstname: process.env.ADMIN_FIRSTNAME,
-              lastname: process.env.ADMIN_LASTNAME,
-              email: process.env.ADMIN_EMAIL,
-              password: process.env.ADMIN_PASSWORD,
-              password_confirmation: process.env.ADMIN_PASSWORD,
-              password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
-              bcrypt.genSaltSync(10)),
-              createdAt: Date.now(),
-              updatedAt: Date.now()
-            });
-          }
-        })
-        .then(() => {
-          if (!module.parent) {
-            server.listen(port, () => {
-              Logger.warn(`🚧 App is Listening on ${port}`);
-            });
-          }
-        })).catch(err => Logger.error(err));
+        dbConnection.end(() => {
+          Logger
+          .warn('Database Check Successful. App Booting Up ...');
+          db.sequelize
+          .sync()
+          .then(() => db.User.findOne({ where: {
+            $or: [{
+              username: process.env.ADMIN_USERNAME
+            }, { email: process.env.ADMIN_EMAIL }]
+          } }).then((userExists) => {
+            if (!userExists) {
+              return db.User.create({
+                roleId: 0,
+                username: process.env.ADMIN_USERNAME,
+                firstname: process.env.ADMIN_FIRSTNAME,
+                lastname: process.env.ADMIN_LASTNAME,
+                email: process.env.ADMIN_EMAIL,
+                password: process.env.ADMIN_PASSWORD,
+                password_confirmation: process.env.ADMIN_PASSWORD,
+                password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
+                bcrypt.genSaltSync(10)),
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+              });
+            }
+          })
+          .then(() => {
+            if (!module.parent) {
+              server.listen(port, () => {
+                Logger.warn(`🚧 App is Listening on ${port}`);
+              });
+            }
+          })).catch(err => Logger.error(err));
+        });
       }
     });
   } else {
