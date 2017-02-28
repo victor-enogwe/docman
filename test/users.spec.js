@@ -1,24 +1,13 @@
 import helper    from './helpers/index.helpers';
-import db        from '../server/models/index';
 
 const app = helper.app;
 const testData = helper.testData;
 
-// before((done) => {
-//   db.sequelize.sync()
-//   // .then(() => {
-//   //   db.User.destroy({
-//   //     where: {
-//   //       roleId: 1
-//   //     }
-//   //   }).then(() => done());
-//   // });
-// });
-
 describe('Users:', () => {
   const regularUser = testData.validUser1;
   const adminUser = testData.adminUser;
-  let regularUserId, adminUserToken, regularUserToken;
+  let regularUserId, adminUserToken, regularUserToken, regularUser5Id,
+    regularUser5Token;
   describe('Create Regular User', () => {
     it('Should return http code 201 if a Regular User is created', (done) => {
       app.post('/api/v1/users')
@@ -46,6 +35,7 @@ describe('Users:', () => {
       app.post('/api/v1/users')
       .send(testData.validUser5)
       .end((error, response) => {
+        regularUser5Id = response.body.message.id;
         response.body.success.should.equal(true);
         response.body.message.should.have.property('username');
         response.body.message.should.have.property('firstname');
@@ -409,10 +399,11 @@ if admin user does not exist`, (done) => {
     (done) => {
       app.post('/login')
       .send({
-        username: regularUser.username,
-        password: regularUser.password
+        username: testData.validUser5.username,
+        password: testData.validUser5.password
       })
       .end((error, response) => {
+        regularUser5Token = response.body.token;
         response.status.should.equal(200);
         response.body.success.should.equal(true);
         done();
@@ -494,6 +485,23 @@ if regular user does not exist`, (done) => {
         done();
       });
     });
+
+    it('Should not allow a newly created user access without login', (done) => {
+      app.post('/logout')
+      .set({ 'x-access-token': regularUser5Token })
+      .end((err, res) => {
+        if (res.body.message === 'you are now logged out') {
+          app.get('/api/v1/users')
+          .set({ 'x-access-token': regularUser5Token })
+          .end((error, response) => {
+            response.status.should.equal(401);
+            response.body.success.should.equal(false);
+            response.body.message.should.equal('you need to login.');
+            done();
+          });
+        }
+      });
+    });
   });
 
   describe('Get User', () => {
@@ -569,7 +577,7 @@ if regular user does not exist`, (done) => {
 
     it('Should not return a user if user with userId doesn\'t exist',
     (done) => {
-      app.get('/api/v1/users/1000')
+      app.get('/api/v1/users/100000000')
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         response.status.should.equal(404);
@@ -815,13 +823,33 @@ Not found`);
         done();
       });
     });
+
+    it('should deny access to a user that has been deleted',
+    (done) => {
+      app.delete(`/api/v1/users/${regularUser5Id}`)
+      .set({ 'x-access-token': adminUserToken })
+      .end((err, res) => {
+        const result = res.body;
+        if (!err) {
+          app.get(`/api/v1/users/${regularUserId}`)
+          .set({ 'x-access-token': regularUser5Token })
+          .end((error, response) => {
+            response.status.should.equal(404);
+            response.body.success.should.equal(false);
+            response.body.message.should
+            .equal('This user does not exist anymore.');
+            done();
+          });
+        }
+      });
+    });
   });
 
   describe('Logout', () => {
-    it('should successfully logout an admin User with a valid token',
+    it('should successfully logout a regular User with a valid token',
     (done) => {
       app.post('/logout')
-      .set({ 'x-access-token': adminUserToken })
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         response.status.should.equal(200);
         response.body.success.should.equal(true);
@@ -830,10 +858,10 @@ Not found`);
       });
     });
 
-    it('should successfully logout a regular User with a valid token',
+    it('should successfully logout an admin User with a valid token',
     (done) => {
       app.post('/logout')
-      .set({ 'x-access-token': regularUserToken })
+      .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         response.status.should.equal(200);
         response.body.success.should.equal(true);
@@ -856,7 +884,7 @@ Not found`);
     it('should deny access to a user with a logged out token',
     (done) => {
       app.get(`/api/v1/users/${regularUserId}`)
-      .set({ 'x-access-token': regularUserToken })
+      .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         response.status.should.equal(401);
         response.body.success.should.equal(false);

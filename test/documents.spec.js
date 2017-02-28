@@ -3,7 +3,7 @@ import db        from '../server/models/index';
 
 const app = helper.app;
 const testData = helper.testData;
-let regularUserToken, regularUserId, regularUser1Token, regularUser1Id,
+let regularUserToken, regularUserId, regularUser1Token,
   adminToken, publicRegularUserDocumentId, privateRegularUserDocumentId;
 
 before((done) => {
@@ -14,46 +14,42 @@ before((done) => {
         roleId: 1
       }
     }).then(() => {
-      db.Document.destroy({ where: {} })
-      .then(() => {
-        app.post('/api/v1/users')
-        .send(testData.validUser6)
-        .end((err, res) => {
-          regularUserId = res.body.message.id;
-          testData.validUser6Document.creatorId = regularUserId;
+      app.post('/api/v1/users')
+      .send(testData.validUser6)
+      .end((err, res) => {
+        regularUserId = res.body.message.id;
+        testData.validUser6Document.creatorId = regularUserId;
+        app.post('/login')
+        .send({
+          username: testData.validUser6.username,
+          password: testData.validUser6.password
+        })
+        .end((error, response) => {
+          regularUserToken = response.body.token;
           app.post('/login')
           .send({
-            username: testData.validUser6.username,
-            password: testData.validUser6.password
+            username: testData.adminUser.username,
+            password: testData.adminUser.password
           })
-          .end((error, response) => {
-            regularUserToken = response.body.token;
-            app.post('/login')
-            .send({
-              username: testData.adminUser.username,
-              password: testData.adminUser.password
-            })
-            .end((err, res) => {
-              if (!err) {
-                adminToken = res.body.token;
-                app.post('/api/v1/users')
-                .send(testData.validUser7)
-                .end((err, res) => {
-                  if (!err) {
-                    regularUser1Id = res.body.message.Id;
-                    app.post('/login')
-                    .send({
-                      username: testData.validUser7.username,
-                      password: testData.validUser7.password
-                    })
-                    .end((err, res) => {
-                      if (!err) regularUser1Token = res.body.token;
-                      done();
-                    });
-                  }
-                });
-              }
-            });
+          .end((err, res) => {
+            if (!err) {
+              adminToken = res.body.token;
+              app.post('/api/v1/users')
+              .send(testData.validUser7)
+              .end((err, res) => {
+                if (!err && res) {
+                  app.post('/login')
+                  .send({
+                    username: testData.validUser7.username,
+                    password: testData.validUser7.password
+                  })
+                  .end((err, res) => {
+                    if (!err) regularUser1Token = res.body.token;
+                    done();
+                  });
+                }
+              });
+            }
           });
         });
       });
@@ -299,7 +295,7 @@ describe('Document Api', () => {
       app.get('/api/v1/documents?offset=1')
       .set({ 'x-access-token': adminToken })
         .end((error, response) => {
-          const count  = response.body.documents.count;
+          const count = response.body.documents.count;
           const documentLength = response.body.documents.rows.length;
           response.status.should.equal(200);
           response.body.success.should.equal(true);
