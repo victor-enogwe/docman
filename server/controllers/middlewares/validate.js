@@ -175,6 +175,16 @@ const decryptJwt = (reverseToken) => {
   return '';
 };
 
+const message = (results, request, response) => {
+  if (results.rows.length === 0) {
+    return response.status(404).json({
+      success: false,
+      message: `no results found for your query ${request.query.phrase}`
+    });
+  }
+  return response.status(200).json({ success: true, results });
+};
+
 export default {
   showUserDetails,
   showDocumentDetails,
@@ -184,6 +194,7 @@ export default {
   validateDocumentKeys,
   filterDocumentsByAccess,
   encryptJwt,
-  decryptJwt
+  decryptJwt,
+  message
 };
 
