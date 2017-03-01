@@ -40,7 +40,7 @@ Create a Postman environment and set `url` and `token` variables.
 
 Deploy this project to Heroku by clicking the button below.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/andela-venogwe/docman)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/andela-venogwe/docman/tree/staging)
 
 Set the following environment variables below according to your node environment.
 
