@@ -1,5 +1,5 @@
-import helper    from './helpers/index.helpers';
-import db        from '../server/models/index';
+import helper from './helpers/index.helpers';
+import db     from '../server/models/index';
 
 const app = helper.app;
 const testData = helper.testData;
@@ -7,13 +7,13 @@ let regularUserToken, regularUserId, regularUser1Token,
   adminToken, publicRegularUserDocumentId, privateRegularUserDocumentId;
 
 before((done) => {
-  db.sequelize.sync()
-  .then(() => {
-    db.User.destroy({
-      where: {
-        roleId: 1
-      }
-    }).then(() => {
+  db.User.destroy({
+    where: {
+      roleId: 1
+    }
+  }).then(() => {
+    db.Document.destroy({ where: {} })
+    .then(() => {
       app.post('/api/v1/users')
       .send(testData.validUser6)
       .end((err, res) => {
@@ -76,6 +76,7 @@ describe('Document Api', () => {
       .send(testData.invalidUser6Document)
       .set({ 'x-access-token': regularUserToken })
         .end((error, response) => {
+          console.log(response.body)
           response.status.should.equal(400);
           response.body.success.should.equal(false);
           response.body.message.should.equal('creatorId cannot be null');
