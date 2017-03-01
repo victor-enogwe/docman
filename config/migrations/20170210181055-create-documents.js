@@ -15,9 +15,8 @@ module.exports = {
           key: 'id',
           as: 'creatorId'
         },
-        onDelete: 'CASCADE',
+        onDelete: 'DO NOTHING',
         onUpdate: 'CASCADE'
-
       },
       title: {
         allowNull: false,
