@@ -154,6 +154,7 @@ describe('Document Api', () => {
       app.get(`/api/v1/documents/${privateRegularUserDocumentId}`)
       .set({ 'x-access-token': adminToken })
         .end((error, response) => {
+          console.log(response.body)
           response.status.should.equal(200);
           response.body.success.should.equal(true);
           response.body.document.should.have.property('id');
