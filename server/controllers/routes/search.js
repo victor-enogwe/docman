@@ -6,6 +6,7 @@ const search = express.Router();
 
 search.use(auth.checkToken, auth.setQueryParameters);
 
-search.get('/', Search.search);
+search.get('/documents', Search.searchDocuments);
+search.get('/users', auth.isAdmin, Search.searchUsers);
 
 export default search;

@@ -15,9 +15,8 @@ module.exports = {
           key: 'id',
           as: 'creatorId'
         },
-        onDelete: 'CASCADE',
+        onDelete: 'DO NOTHING',
         onUpdate: 'CASCADE'
-
       },
       title: {
         allowNull: false,
@@ -49,7 +48,7 @@ module.exports = {
       'Document',
       ['title', 'excerpt'],
       {
-        indexName: 'Search_Index',
+        indexName: 'Documents_Index',
         indicesType: 'FULLTEXT'
       }
     );

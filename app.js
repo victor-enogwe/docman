@@ -101,10 +101,10 @@ app.use((req, res, next) => {
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use('/', Routes.home);
 app.use('/api/v1/users/', Routes.users);
 app.use('/api/v1/documents', Routes.documents);
 app.use('/api/v1/search', Routes.search);
-app.use('*', Routes.home);
 
 server.on('listening', onListening);
 server.on('error', onError);
@@ -113,7 +113,8 @@ dbConnection.connect((err) => {
   if (!err) {
     dbConnection
     .query(`CREATE DATABASE IF NOT EXISTS ${database}`, (error) => {
-      dbConnection.end(() => Logger.warn('Initial Database Connection CLosed'));
+      dbConnection.end(() => Logger
+      .warn('🚧 Initial Database Connection Successful. App Booting Up ...'));
       if (!error) {
         db.sequelize
         .sync()
@@ -139,11 +140,9 @@ dbConnection.connect((err) => {
           }
         })
         .then(() => {
-          if (!module.parent) {
-            server.listen(port, () => {
-              Logger.warn(`🚧 App is Listening on ${port}`);
-            });
-          }
+          server.listen(port, () => {
+            Logger.warn(`🚧 App is Listening on ${port}`);
+          });
         })).catch(err => Logger.error(err));
       }
     });

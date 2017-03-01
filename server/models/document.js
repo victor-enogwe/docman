@@ -69,17 +69,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
   }, {
-    indexes: [
-      // add a FULLTEXT index
-      { type: 'FULLTEXT', name: 'Search_Index', fields: ['title', 'excerpt'] }
-    ],
+    // indexes: [
+    //   // add a FULLTEXT index
+    //   {
+    //     type: 'FULLTEXT',
+    //     name: 'Documents_Index',
+    //     fields: ['title', 'excerpt']
+    //   }
+    // ],
     classMethods: {
-      associate(models) {
-        Document.belongsTo(models.User, {
-          foreignKey: 'creatorId',
-          onDelete: 'CASCADE'
-        });
-      },
       validateContent(document) {
         const regexContent = new RegExp(
           /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/,
@@ -90,9 +88,7 @@ export default (sequelize, DataTypes) => {
           'gi'
         );
 
-        if (regexHtml.test(document.title)) {
-          throw new Error('Document title contains dissallowed markup');
-        } else if (regexHtml.test(document.excerpt)) {
+        if (regexHtml.test(document.excerpt)) {
           throw new Error('Document excerpt contains dissallowed markup');
         } else if (regexContent.test(document.content)) {
           throw new Error('Document content contains dissallowed markup');
@@ -107,8 +103,7 @@ export default (sequelize, DataTypes) => {
         this.validateContent(document);
       }
     },
-    freezeTableName: true,
-    // paranoid: true
+    freezeTableName: true
   });
 
   return Document;

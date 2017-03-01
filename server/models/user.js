@@ -82,8 +82,7 @@ than 254 characters.');
       type: DataTypes.INTEGER,
       validate: {
         isZeroOrOne(value) {
-          value = parseInt(value, 10);
-          if (value < 0 || value > 1) {
+          if (isNaN(value) || +value < 0 || +value > 1) {
             throw new Error('roleId can only be 0 or 1');
           }
         }
@@ -128,11 +127,22 @@ than 254 characters.');
       }
     }
   }, {
+    // indexes: [
+    //   {
+    //     type: 'FULLTEXT',
+    //     name: 'Users_Index',
+    //     fields: ['username', 'email']
+    //   }
+    // ],
     classMethods: {
       associate(models) {
         User.hasMany(models.Document, {
+          foreignKey: 'creatorId'
+        });
+
+        User.belongsTo(models.Document, {
           foreignKey: 'creatorId',
-          onDelete: 'CASCADE'
+          constraints: false
         });
       }
     },
@@ -157,15 +167,16 @@ than 254 characters.');
        */
       authenticate(password) {
         const auth = bcrypt.compareSync(password, this.password_digest);
+        let token = this.generateToken();
+        token = validate.encryptJwt(token);
         if (auth) {
-          return [true, this.generateToken()];
+          return [true, token];
         }
         return [false, null];
       }
     },
 
-    freezeTableName: true,
-    // paranoid: true
+    freezeTableName: true
   });
   return User;
 };

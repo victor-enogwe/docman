@@ -36,7 +36,10 @@ const Documents = {
         message: documentUpdated
       }));
     })
-    .catch(error => res.status(500).json({ success: false, message: error }));
+    .catch(error => res.status(500).json({
+      success: false,
+      message: error.message
+    }));
   },
 
   delete(req, res) {
@@ -45,10 +48,10 @@ const Documents = {
       if (!document) {
         return res.status(404).send({
           success: false,
-          message: `Delete Failed! Document witn ìd:${req.params.id} Not found`
+          message: `Delete Failed! Document with ìd:${req.params.id} Not found`
         });
       }
-      if (req.decoded.roleId !== 0 || (req.decoded.id !== document.creatorId)) {
+      if (req.decoded.roleId !== 0 && (req.decoded.id !== document.creatorId)) {
         return res.status(401).send({
           success: false,
           message: 'You don\'t have authorization to perform this action'
@@ -56,7 +59,7 @@ const Documents = {
       }
       return document.destroy()
       .then(() => res.status(200).json({
-        message: `Delete Successful! Document witn ìd:${req.params.id} deleted`
+        message: `Delete Successful! Document with ìd:${req.params.id} deleted`
       }));
     })
     .catch(error => res.status(500).json({ success: false, message: error }));
@@ -67,6 +70,9 @@ const Documents = {
       attributes: validate.filterDocumentDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
+      where: validate.filterDocumentsByAccess(req.query.access) ? {
+        access: req.query.access
+      } : {}
     })
     .then((documents) => {
       if (documents.rows.length === 0) {
@@ -92,7 +98,8 @@ const Documents = {
           message: 'document not found'
         });
       }
-      if (req.decoded.roleId !== 0 || (req.decoded.id !== document.creatorId)) {
+      if (parseInt(req.decoded.roleId, 10) !== 0 &&
+      (req.decoded.id !== document.creatorId) && document.access !== 'public') {
         return res.status(401).send({
           success: false,
           message: 'You don\'t have authorization to perform this action'
@@ -110,18 +117,25 @@ const Documents = {
   },
 
   findUserDocs(req, res) {
-    documentModel.findAndCountAll({ where: {
-      creatorId: req.params.id,
-    },
+    const access = validate
+    .filterDocumentsByAccess(req.query.access) ? req.query.access : undefined;
+    let theFilter;
+    if (access) {
+      theFilter = {
+        creatorId: req.params.id,
+        access
+      };
+    } else { theFilter = { creatorId: req.params.id }; }
+    documentModel.findAndCountAll({ where: theFilter,
       attributes: validate.filterDocumentDetails(),
       offset: req.query.offset,
-      limit: req.query.limit,
+      limit: req.query.limit
     })
     .then((documents) => {
       if (documents.count === 0) {
         return res.status(404).json({
           success: false,
-          message: 'no document not found'
+          message: 'no document found'
         });
       }
       return res.status(200).json({

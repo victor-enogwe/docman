@@ -1,143 +1,167 @@
-import faker  from 'faker';
+import faker  from 'Faker';
 
 const testData = {
   validUser1: {
-    username: 'ahmed',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'amelia',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuserpass',
     password_confirmation: 'fakeuserpass'
   },
   validUser1Update: {
-    lastname: faker.name.lastName(),
-    email: faker.internet.email()
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email()
   },
   inValidUser1Update: {
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     menu: 'hey'
   },
   validUser2: {
-    username: 'audu',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'beethoven',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuserpass',
     password_confirmation: 'fakeuserpass'
   },
   validUser3: {
-    username: 'edena',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'Katherine',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuserpass',
     password_confirmation: 'fakeuserpass'
   },
   validUser4: {
-    username: 'Bison',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'Mozart',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
+    password: 'fakeuserpass',
+    password_confirmation: 'fakeuserpass'
+  },
+  validUser5: {
+    username: 'bethany',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
+    password: 'fakeuserpass',
+    password_confirmation: 'fakeuserpass'
+  },
+  validUser6: {
+    username: 'sagat',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
+    password: 'fakeuserpass',
+    password_confirmation: 'fakeuserpass'
+  },
+  validUser7: {
+    username: 'subzero',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuserpass',
     password_confirmation: 'fakeuserpass'
   },
   invalidUser1: {
-    username: faker.internet.userName(),
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'simbi',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuserpass',
     password_confirmation: 'fakeuser'
   },
   invalidUser2: {
-    usernam: faker.internet.userName(),
-    hacked: faker.internet.userName(),
-    firstnam: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    usernam: 'melanie',
+    hacked: faker.Internet.userName(),
+    firstnam: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     passw: 'fakeuserpass',
     password_confirmation: 'fakeuser'
   },
   invalidUser3: {
-    username: faker.internet.userName(),
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'karlried',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuse',
     password_confirmation: 'fakeuse'
   },
   invalidUser4: {
-    username: faker.internet.userName(),
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    username: 'depay',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     roleId: 0,
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser5: {
     username: 'i',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    firstname: 'clothilde',
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser6: {
     username: 'iammorethan20charactersofcoursedothidagainandagainandIthinkthi\
 iammorethan20charactersofcoursedothidagainandagainandIthinkthi',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser7: {
-    username: 'deloite',
+    username: 'sassenach',
     firstname: 'e',
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser8: {
-    username: 'demiGod',
+    username: 'moore',
     firstname: 'ihavetoputin50charactersheresupercalifragilisticexpialidociou\
 iammorethan20charactersofcoursedothidagainandagainandIthinkthi',
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
+    lastname: faker.Name.lastName(),
+    email: faker.Internet.email(),
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser9: {
-    username: faker.internet.userName(),
-    firstname: faker.name.firstName(),
+    username: 'abraham',
+    firstname: faker.Name.firstName(),
     lastname: 'r',
-    email: faker.internet.email(),
+    email: faker.Internet.email(),
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser10: {
-    username: faker.internet.userName(),
-    firstname: faker.name.firstName(),
+    username: 'darlingthon',
+    firstname: 'darling',
     lastname: 'ihavetoputin50charactersheresupercalifragilisticexpialidociou',
-    email: faker.internet.email(),
+    email: faker.Internet.email(),
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser11: {
-    username: 'kareen',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
+    username: 'ceceliamay',
+    firstname: 'baker',
+    lastname: 'ramsey',
     email: 'a@yahhoooooo',
     password: 'fakeuser',
     password_confirmation: 'fakeuser'
   },
   invalidUser12: {
-    username: 'kareen',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
+    username: 'deriderson',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
     email: `rNwj0DTYKDtgutzStfGsBpBiQK3ZZoM1eNlMBamT36Ee6wPrt6vZPgPMjrCurSpoFk\
 FCIqQQBoyrOh9D4zSzcKFAYoVY3LG9h8hTWuJo5nz6huPibG1pZJTgfzjNpWiAgO1GQZL94s8pwWkP\
 URfmReJYbjM5tV4wbJgg1XpCqJs5BYHR8xxceyErcbzrvyAngOyBsSKaIESk29cuhEQTHhMy0FuZ1l\
@@ -147,9 +171,9 @@ SiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6ORw725yayXevXWLbAMp
     password_confirmation: 'fakeuser'
   },
   invalidUser13: {
-    username: 'kareen',
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
+    username: 'jongzhou',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
     email: 'a@yahhoooooo',
     password: 'fakeuser',
     password_confirmation: ''
@@ -161,223 +185,157 @@ SiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6ORw725yayXevXWLbAMp
     email: process.env.ADMIN_EMAIL,
     password: process.env.ADMIN_PASSWORD
   },
-  // adminUser1: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUser2: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUser3: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUser4: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUser5: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUserRole: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUserSearch: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // adminUserForDocumentTest: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 1
-  // },
-  // testUser: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password()
-  // },
-  // regularUserForDocumentTest: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUserForDocumentTest2: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUser1: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUserRole: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUser2: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUser3: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUser4: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // regularUser5: {
-  //   username: faker.internet.userName(),
-  //   firstName: faker.name.firstName(),
-  //   lastName: faker.name.lastName(),
-  //   email: faker.internet.email(),
-  //   password: faker.internet.password(),
-  //   roleId: 2
-  // },
-  // // Note before using thise documents, a ownerId property should be added
-  // documentRole1: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'role',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPrivate1: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'private',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPublic1: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'public',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentRole2: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'role',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPrivate2: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'private',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPublic2: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'public',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentRole3: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'role',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPrivate3: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'private',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPublic3: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'public',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentRole4: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'role',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPrivate4: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'private',
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentInvalid: {
-  // },
-  // documentNoAccess: {
-  //   title: faker.company.catchPhrase(),
-  //   content: faker.lorem.paragraph()
-  // },
-  // documentPublic4: {
-  //   title: faker.company.catchPhrase(),
-  //   access: 'public',
-  //   content: faker.lorem.paragraph()
-  // },
-  // newRole1: {
-  //   title: 'rookie'
-  // },
-  // updateRole1: {
-  //   title: 'rookie update'
-  // },
-  // duplicateRole1: {
-  //   title: 'rookie'
-  // },
-  // newRole2: {
-  //   title: 'amateur'
-  // },
-  // newRole3: {
-  //   title: 'professional'
-  // }
+  adminUserCreate: {
+    username: process.env.ADMIN_USERNAME,
+    firstname: process.env.ADMIN_FIRSTNAME,
+    lastname: process.env.ADMIN_LASTNAME,
+    email: process.env.ADMIN_EMAIL,
+    password: process.env.ADMIN_PASSWORD,
+    password_confirmation: process.env.ADMIN_PASSWORD
+  },
+  adminDuplicateEmail: {
+    username: 'cristus',
+    firstname: process.env.ADMIN_FIRSTNAME,
+    lastname: process.env.ADMIN_LASTNAME,
+    email: process.env.ADMIN_EMAIL,
+    password: process.env.ADMIN_PASSWORD,
+    password_confirmation: process.env.ADMIN_PASSWORD
+  },
+  badUsername: {
+    username: '2cecelia',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  spaceUsername: {
+    username: '2cecelia hey',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  longUsername: {
+    username: '2ceceliaheyfffffffffffffffffffffffffffffffffffffffffffffffffff',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  shortUsername: {
+    username: '2c',
+    firstname: faker.Name.firstName(),
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  badFirstname: {
+    username: 'cecelia',
+    firstname: '2cecelia',
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  spaceFirstname: {
+    username: 'cecelia',
+    firstname: '2cecelia hey',
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  longFirstname: {
+    username: 'cecelia',
+    firstname: '2ceceliaheyffffffffffffffffffffffffffffffffffffffffffffffffff',
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  shortFirstname: {
+    username: 'cecelia',
+    firstname: 'ce',
+    lastname: faker.Name.lastName(),
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  badLastname: {
+    username: 'cecelia',
+    firstname: 'cecelia',
+    lastname: '2cecelia',
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  spaceLastname: {
+    username: 'cecelia',
+    firstname: 'cecilia',
+    lastname: '2cecelia hey',
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  longLastname: {
+    username: 'cecelia',
+    firstname: 'cecelia',
+    lastname: '2ceceliaheyfffffffffffffffffffffffffffffffffffffffffffffffffff',
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  shortLastname: {
+    username: 'cecelia',
+    firstname: 'cecelia',
+    lastname: 'ce',
+    email: 'a@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  badRoleUser: {
+    roleId: 'false',
+    username: 'simonellasss',
+    firstname: 'cecelia',
+    lastname: 'cecelia',
+    email: 'ajax@yahoo.com',
+    password: 'fakeuser',
+    password_confirmation: 'fakeuser'
+  },
+  badPasswordUser: {
+    username: 'cecelia',
+    firstname: 'cecelia',
+    lastname: 'cecelia',
+    email: 'a@yahoo.com',
+    roleId: 1,
+    password: 'fakeu',
+    password_confirmation: 'fakeu'
+  },
+  noPasswordConfirmUser: {
+    username: 'simonellasss',
+    firstname: 'cecelia',
+    lastname: 'cecelia',
+    email: 'ajax@yahoo.com',
+    password: 'fakeuser',
+    roleId: 1,
+    password_confirmation: ''
+  },
+  validUser6Document: {
+    title: faker.Lorem.sentence(),
+    excerpt: faker.Lorem.sentences(),
+    access: 'private',
+    content: faker.Lorem.paragraph()
+  },
+  invalidUser6Document: {
+    title: faker.Lorem.sentence(),
+    excerpt: faker.Lorem.sentences(),
+    access: 'private',
+    content: faker.Lorem.paragraph()
+  }
 };
 
 export default testData;
