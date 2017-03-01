@@ -82,8 +82,7 @@ than 254 characters.');
       type: DataTypes.INTEGER,
       validate: {
         isZeroOrOne(value) {
-          value = parseInt(value, 10);
-          if (value < 0 || value > 1) {
+          if (isNaN(value) || +value < 0 || +value > 1) {
             throw new Error('roleId can only be 0 or 1');
           }
         }
@@ -128,15 +127,18 @@ than 254 characters.');
       }
     }
   }, {
-    indexes: [
-      { type: 'FULLTEXT', name: 'Users_Index', fields: ['username', 'email'] }
-    ],
+    // indexes: [
+    //   { type: 'FULLTEXT', name: 'Users_Index', fields: ['username', 'email'] }
+    // ],
     classMethods: {
       associate(models) {
         User.hasMany(models.Document, {
+          foreignKey: 'creatorId'
+        });
+
+        User.belongsTo(models.Document, {
           foreignKey: 'creatorId',
-          onUpdate: 'CASCADE',
-          onDelete: 'CASCADE',
+          constraints: false
         });
       }
     },
@@ -170,8 +172,7 @@ than 254 characters.');
       }
     },
 
-    freezeTableName: true,
-    paranoid: true
+    freezeTableName: true
   });
   return User;
 };
