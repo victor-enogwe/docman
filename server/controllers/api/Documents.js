@@ -4,6 +4,12 @@ import validate    from '../middlewares/validate';
 const documentModel = db.Document;
 
 const Documents = {
+  /**
+   * Method to create a document
+   * @param {Object} req the request Object
+   * @param {Object} res the response Object
+   * @returns {Object} the response body
+   */
   create(req, res) {
     return documentModel.create(req.body)
     .then(newDocument => res.status(201)
@@ -15,6 +21,12 @@ const Documents = {
     }));
   },
 
+ /**
+   * Method to update a document
+   * @param {Object} req the request Object
+   * @param {Object} res the response Object
+   * @returns {Object} the response body
+   */
   update(req, res) {
     documentModel.findById(req.params.id)
     .then((document) => {
@@ -42,6 +54,12 @@ const Documents = {
     }));
   },
 
+  /**
+   * Method to delete a document
+   * @param {Object} req the request Object
+   * @param {Object} res the response Object
+   * @returns {Object} the response body
+   */
   delete(req, res) {
     documentModel.findById(req.params.id)
     .then((document) => {
@@ -65,6 +83,12 @@ const Documents = {
     .catch(error => res.status(500).json({ success: false, message: error }));
   },
 
+  /**
+   * Method to find all documents
+   * @param {Object} req the request Object
+   * @param {Object} res the response Object
+   * @returns {Object} the response body
+   */
   findAll(req, res) {
     documentModel.findAndCountAll({
       attributes: validate.filterDocumentDetails(),
@@ -89,6 +113,12 @@ const Documents = {
     }));
   },
 
+  /**
+   * Method to find a documents by id
+   * @param {Object} req the request Object
+   * @param {Object} res the response Object
+   * @returns {Object} the response body
+   */
   findOne(req, res) {
     documentModel.findById(req.params.id)
     .then((document) => {
@@ -116,6 +146,12 @@ const Documents = {
     }));
   },
 
+  /**
+   * Method to find user documents
+   * @param {Object} req the request Object
+   * @param {Object} res the response Object
+   * @returns {Object} the response body
+   */
   findUserDocs(req, res) {
     const access = validate
     .filterDocumentsByAccess(req.query.access) ? req.query.access : undefined;

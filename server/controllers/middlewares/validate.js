@@ -97,7 +97,6 @@ const validateDocumentKeys = (request, isUpdate) => {
     'excerpt',
     'access',
     'content',
-    'creatorId',
     'title',
     'authorized'
   ];
@@ -114,6 +113,12 @@ const validateDocumentKeys = (request, isUpdate) => {
   return [validity, badRequestBodyKeys];
 };
 
+ /**
+ * Function to filter documents by access
+ * @param {String} access the access level
+ * @returns {Object} the access level if valid
+ * @returns {Object} undefined if an invalid access is supplied
+ */
 const filterDocumentsByAccess = (access) => {
   const accepted = ['public', 'private', 'users'];
   if (accepted.includes(access)) {
@@ -122,9 +127,18 @@ const filterDocumentsByAccess = (access) => {
   return undefined;
 };
 
+/**
+ * Function to generate a unique array from an array
+ * @param {Object} array the supplied array
+ * @returns {Object} the filtered array
+ */
 const uniqueArray = array => array
 .filter((value, index) => array.indexOf(value) === index);
 
+/**
+ * Function to create a jwt encoder object
+ * @returns {Object} the jwt encoder object
+ */
 const jwtEncode = () => {
   const jwtSecret = process.env.JWT_SECRET.replace(/\s/g, '');
   const secret = uniqueArray(jwtSecret.split('').reverse());
@@ -135,6 +149,11 @@ const jwtEncode = () => {
   return jwtDict;
 };
 
+/**
+ * Function to encrypt a jwt strinh
+ * @param {String} token the jwt token
+ * @returns {String} the encoded jwt string
+ */
 const encryptJwt = (token) => {
   const dict = jwtEncode();
   token = token.split('.');
@@ -147,7 +166,11 @@ const encryptJwt = (token) => {
   .join('')}.${token[2]}`;
 };
 
-
+/**
+ * Function to create a reverse object from an object
+ * @param {Object} json a valid json object
+ * @returns {Object} the reverse object
+ */
 const swap = (json) => {
   const reverseJson = {};
   const keys = Object.keys(json);
@@ -157,6 +180,11 @@ const swap = (json) => {
   return reverseJson;
 };
 
+/**
+ * Function to decrypt the encrypted jwt token
+ * @param {String} reverseToken the encoded jwt token
+ * @returns {Object} the decrypted token
+ */
 const decryptJwt = (reverseToken) => {
   if (reverseToken) {
     if (reverseToken.split('.').length === 3) {
@@ -175,6 +203,13 @@ const decryptJwt = (reverseToken) => {
   return '';
 };
 
+/**
+ * Function to return a response message
+ * @param {Object} results the result object
+ * @param {Object} request the request object
+ * @param {Object} response the response object
+ * @returns {Object} a response json object
+ */
 const message = (results, request, response) => {
   if (results.rows.length === 0) {
     return response.status(404).json({
