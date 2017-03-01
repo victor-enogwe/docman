@@ -8,8 +8,7 @@ export default (sequelize, DataTypes) => {
           args: /\d+/i,
           msg: 'creatorId must be a number'
         }
-      },
-      defaultValue: 1
+      }
     },
     title: {
       allowNull: false,
@@ -70,22 +69,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
   }, {
-    indexes: [
-      // add a FULLTEXT index
-      {
-        type: 'FULLTEXT',
-        name: 'Documents_Index',
-        fields: ['title', 'excerpt']
-      }
-    ],
+    // indexes: [
+    //   // add a FULLTEXT index
+    //   {
+    //     type: 'FULLTEXT',
+    //     name: 'Documents_Index',
+    //     fields: ['title', 'excerpt']
+    //   }
+    // ],
     classMethods: {
-      associate(models) {
-        Document.belongsTo(models.User, {
-          foreignKey: 'creatorId',
-          onUpdate: 'NO ACTION',
-          onDelete: 'NO ACTION'
-        });
-      },
       validateContent(document) {
         const regexContent = new RegExp(
           /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/,
@@ -111,8 +103,7 @@ export default (sequelize, DataTypes) => {
         this.validateContent(document);
       }
     },
-    freezeTableName: true,
-    paranoid: true
+    freezeTableName: true
   });
 
   return Document;
