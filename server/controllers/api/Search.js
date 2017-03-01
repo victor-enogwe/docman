@@ -2,7 +2,7 @@ import db          from '../../models/';
 import validate    from '../middlewares/validate';
 
 const searchDocuments = db.Document;
-const searchUsers = db.Users;
+const searchUsers = db.User;
 
 export default {
 
@@ -14,13 +14,23 @@ export default {
    */
   searchDocuments(req, res) {
     return searchDocuments.findAndCountAll({
-      where: ['MATCH (title, excerpt) AGAINST(?)',
-        req.query.phrase ? [req.query.phrase] : ['']],
+      where: req.query.search,
       attributes: validate.filterDocumentDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
     })
     .then((results) => {
+      const userDocuments = [];
+      if (req.decoded.roleId !== 0) {
+        results.rows.forEach((document) => {
+          if (document.creatorId === req.decoded.id ||
+          document.access === 'public') {
+            userDocuments.push(document);
+          }
+        });
+        results.count = userDocuments.length;
+        results.rows = userDocuments;
+      }
       if (results.rows.length === 0) {
         return res.status(404).json({
           success: false,
@@ -30,6 +40,7 @@ export default {
       return res.status(200).json({ success: true, results });
     });
   },
+
   /**
    * search all users available
    * @param {Object} req the request object
