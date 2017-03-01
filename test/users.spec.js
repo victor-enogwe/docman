@@ -1,6 +1,6 @@
 import helper    from './helpers/index.helpers';
 
-const app = helper.app
+const app = helper.app;
 const testData = helper.testData;
 
 describe('Users:', () => {
@@ -829,8 +829,7 @@ Not found`);
       app.delete(`/api/v1/users/${regularUser5Id}`)
       .set({ 'x-access-token': adminUserToken })
       .end((err, res) => {
-        const result = res.body;
-        if (!err) {
+        if (!err || res.body) {
           app.get(`/api/v1/users/${regularUserId}`)
           .set({ 'x-access-token': regularUser5Token })
           .end((error, response) => {

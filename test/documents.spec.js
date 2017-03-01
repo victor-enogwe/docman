@@ -76,7 +76,6 @@ describe('Document Api', () => {
       .send(testData.invalidUser6Document)
       .set({ 'x-access-token': regularUserToken })
         .end((error, response) => {
-          console.log(response.body)
           response.status.should.equal(400);
           response.body.success.should.equal(false);
           response.body.message.should.equal('creatorId cannot be null');
