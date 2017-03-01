@@ -243,5 +243,92 @@ export default {
     req.query.offset = isNaN(+req.query.offset) || +req.query.offset > 10 ||
     +req.query.offset < 1 ? 0 : +req.query.offset;
     next();
+  },
+
+  /**
+   * sets and validates the search query phrase
+    * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @param {Function} next the callback function
+   * @returns {Object} validity response
+   */
+  getSearchPhrase(req, res, next) {
+    if (!req.query.phrase) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please supply a query phrase parameter.'
+      });
+    } else if (!/[A-Za-z0-9]/i.test(req.query.phrase)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Query phrase parameter can only be aplhanumeric.'
+      });
+    } else if (req.query.phrase.length < 4) {
+      return res.status(400).json({
+        success: false,
+        message: 'Query phrase parameter length should be greater than 4.'
+      });
+    }
+    next();
+  },
+
+ /**
+   * checks if request parameters access and user id is supplied
+    * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @param {Function} next the callback function
+   * @returns {Object} validity response
+   */
+  searchQueryAccess(req, res, next) {
+    const accepted = ['public', 'private', 'users'];
+    if (req.query.access && !accepted.includes(req.query.access)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Query access can only be public, private or user.'
+      });
+    }
+    let user = '';
+    if ((req.params.id && isNaN(req.params.id)) || req.params.id < 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'parameter id can only be a positive number greater than 0.'
+      });
+    } else if (req.params.id && !isNaN(+req.params.id)) {
+      user = `creatorId = '${req.params.id}' AND `;
+    }
+
+    let query = ['MATCH (title, excerpt) AGAINST(?)', [req.query.phrase]];
+    if (req.query.access === 'public') {
+      query =
+      [`${user} access = 'public' AND MATCH (title, excerpt) AGAINST(?)`,
+[req.query.phrase]];
+    } else if (req.query.access === 'private') {
+      query =
+      [`${user} access = 'private' AND MATCH (title, excerpt) AGAINST(?)`,
+[req.query.phrase]];
+    } else if (req.query.access === 'user') {
+      query =
+      [`${user} access = 'user' AND MATCH (title, excerpt) AGAINST(?)`,
+[req.query.phrase]];
+    }
+    req.query.search = query;
+    next();
+  },
+
+  /**
+   * checks if a user query parameter is supplied
+    * @param {Object} req the request object
+   * @param {Object} res the response object
+   * @param {Function} next the callback function
+   * @returns {Object} validity response
+   */
+  searchQueryUsers(req, res, next) {
+    if (!req.query.user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please supply a search query parameter for user.'
+      });
+    }
+    next();
   }
 };
