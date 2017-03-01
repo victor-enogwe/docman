@@ -31,13 +31,7 @@ export default {
         results.count = userDocuments.length;
         results.rows = userDocuments;
       }
-      if (results.rows.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: `no results found for your query ${req.query.phrase}`
-        });
-      }
-      return res.status(200).json({ success: true, results });
+      return validate.message(results, req, res);
     });
   },
 
@@ -56,13 +50,7 @@ export default {
       limit: req.query.limit,
     })
     .then((results) => {
-      if (results.rows.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: `no results found for your query ${req.query.phrase}`
-        });
-      }
-      return res.status(200).json({ success: true, results });
+      validate.message(results, req, res);
     });
   }
 };
