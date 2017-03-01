@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/andela-venogwe/docman.svg?branch=staging)](https://travis-ci.org/andela-venogwe/docman)
 [![Code Climate](https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/gpa.svg)](https://codeclimate.com/repos/58aec2c282269f0292000169/feed)
-[![Test Coverage](https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/coverage.svg)](https://codeclimate.com/repos/58aec2c282269f0292000169/coverage)
 [![Issue Count](https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/issue_count.svg)](https://codeclimate.com/repos/58aec2c282269f0292000169/feed)
 [![Coverage Status](https://coveralls.io/repos/github/andela-venogwe/docman/badge.svg?branch=feature%2F140457059%2Froutes-and-controllers)](https://coveralls.io/github/andela-venogwe/docman?branch=feature%2F140457059%2Froutes-and-controllers)
 
@@ -33,9 +32,9 @@ Document Management System provides a restful API for users to create and manage
 
 ### Postman Collection
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/93ff8d3afef2a485f06d)
 
-Create a Postman environment and set `url` and `token` variables or download and import a production environment from this [link][postman-env-link]
+Create a Postman environment and set `url` and `token` variables.
 
 ## Deployment
 
