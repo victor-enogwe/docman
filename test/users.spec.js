@@ -1,6 +1,6 @@
 import helper    from './helpers/index.helpers';
 
-const app = helper.app;
+const app = helper.app
 const testData = helper.testData;
 
 describe('Users:', () => {
@@ -175,20 +175,20 @@ be 3 - 40 characters long.');
       .end((error, response) => {
         response.status.should.equal(400);
         response.body.message.should
-        .equal('Username must start with a letter, have no spaces, and be \
+        .equal('Lastname must start with a letter, have no spaces, and be \
 3 - 40 characters long.');
         done();
       });
     });
 
-    it('Should only allow lastnames having less than 50 characters',
+    it('Should only allow lastnames having less than 40 characters',
     (done) => {
       app.post('/api/v1/users')
       .send(testData.invalidUser10)
       .end((error, response) => {
         response.status.should.equal(400);
         response.body.message.should
-        .equal('Username must start with a letter, have no spaces, and be \
+        .equal('Lastname must start with a letter, have no spaces, and be \
 3 - 40 characters long.');
         done();
       });
