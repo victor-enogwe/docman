@@ -127,13 +127,6 @@ than 254 characters.');
       }
     }
   }, {
-    // indexes: [
-    //   {
-    //     type: 'FULLTEXT',
-    //     name: 'Users_Index',
-    //     fields: ['username', 'email']
-    //   }
-    // ],
     classMethods: {
       associate(models) {
         User.hasMany(models.Document, {
