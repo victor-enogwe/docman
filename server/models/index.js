@@ -10,7 +10,13 @@ const port = config.port;
 const dialect = config.dialect;
 const db = {};
 const sequelize = new Sequelize(database, user, password, {
-  host, port, dialect, logging: false
+  host,
+  port,
+  dialect,
+  logging: false,
+  dialectOptions: {
+    multipleStatements: true
+  }
 });
 
 
