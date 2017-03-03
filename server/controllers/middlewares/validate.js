@@ -214,6 +214,7 @@ const message = (results, request, response) => {
       message: `no results found for your query ${request.query.phrase}`
     });
   }
+  results.pages = Math.ceil(results.count / request.query.limit);
   return response.status(200).json({ status: 'success', data: { results } });
 };
 
