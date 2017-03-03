@@ -2,6 +2,7 @@ import jwt         from 'jsonwebtoken';
 import db          from '../../models/';
 import { decrypt } from '../middlewares/encrypt';
 import validate    from '../middlewares/validate';
+import utils       from '../middlewares/utils';
 
 const userModel = db.User;
 
@@ -21,7 +22,7 @@ export default {
     // decode token
     if (!token) {
       return res.status(403).send({
-        success: false,
+        status: 'fail',
         message: 'No token provided.'
       });
     }
@@ -29,29 +30,21 @@ export default {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         return res.status(401).json({
-          success: false,
+          status: 'fail',
           message: 'Failed to authenticate token.'
         });
       }
       return userModel.findById(decoded.id).then((user) => {
         if (!user) {
           return res.status(404).json({
-            success: false,
+            status: 'fail',
             message: 'This user does not exist anymore.'
-          });
-        } else if (!user.auth_token) {
-          return res.status(401).json({
-            success: false,
-            message: 'you need to login.'
           });
         }
         let decryptedToken = decrypt(user.auth_token, user.password_digest);
         decryptedToken = validate.decryptJwt(decryptedToken);
-        if (token !== decryptedToken) {
-          return res.status(401).json({
-            success: false,
-            message: 'you need to login.'
-          });
+        if (!user.auth_token || token !== decryptedToken) {
+          return utils.loginMessage(res);
         }
         req.decoded = decoded;
         next();
@@ -67,9 +60,7 @@ export default {
    */
   isAdmin(req, res, next) {
     if (req.decoded.roleId !== 0) {
-      return res.status(401).send({
-        success: false,
-        message: 'You don\'t have authorization to perform this action' });
+      return utils.authorizationFailedMessage(res);
     }
     next();
   },
@@ -83,14 +74,7 @@ export default {
    */
   isValidUserCreateBody(req, res, next) {
     const isValidRequestBody = validate.validateUserKeys(req.body);
-    if (!isValidRequestBody[0]) {
-      return res.status(400).json({
-        success: false,
-        message:
-        `badly formatted request body including ( ${isValidRequestBody[1]} )`
-      });
-    }
-    next();
+    return validate.validRequestBodyCheck(isValidRequestBody, res, next);
   },
 
   /**
@@ -102,15 +86,7 @@ export default {
    */
   isValidDocumentCreateBody(req, res, next) {
     const isValidRequestBody = validate.validateDocumentKeys(req.body);
-    if (!isValidRequestBody[0]) {
-      return res.status(400).json({
-        success: false,
-        message:
-        `badly formatted request body including ( ${isValidRequestBody[1]} )`
-      });
-    }
-    req.body.creatorId = req.decoded.id;
-    next();
+    return validate.validRequestBodyCheck(isValidRequestBody, res, next);
   },
 
   /**
@@ -125,14 +101,7 @@ export default {
     if (req.decoded.roleId === 0) {
       isValidRequestBody = validate.validateUserKeys(req.body, true);
     }
-    if (!isValidRequestBody[0]) {
-      return res.status(409).json({
-        success: false,
-        message:
-        `badly formatted request body including ( ${isValidRequestBody[1]} )`
-      });
-    }
-    next();
+    return validate.validRequestBodyCheck(isValidRequestBody, res, next);
   },
 
   /**
@@ -143,15 +112,8 @@ export default {
    * @returns {Object} validity response
    */
   isValidDocumentUpdateBody(req, res, next) {
-    const isValidRequestBody = validate.validateDocumentKeys(req.body, true);
-    if (!isValidRequestBody[0]) {
-      return res.status(400).json({
-        success: false,
-        message:
-        `badly formatted request body including ( ${isValidRequestBody[1]} )`
-      });
-    }
-    next();
+    const isValidRequestBody = validate.validateDocumentKeys(req.body);
+    return validate.validRequestBodyCheck(isValidRequestBody, res, next);
   },
 
   /**
@@ -174,7 +136,7 @@ export default {
     }
     if ((username && email) || !valid) {
       return res.status(401).json({
-        success: false,
+        status: 'fail',
         message: 'Please supply either user name or email, plus your password'
       });
     }
