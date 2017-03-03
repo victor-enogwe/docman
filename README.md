@@ -35,8 +35,8 @@ PATCH /api/v1/documents/:id                                 |   Update document 
 DELETE /api/v1/documents/:id                                |   Delete document.
 GET /api/v1/documents/user/:id                              |   Find all documents belonging to the user.
 GET /api/v1/search/users/:user                              |   Gets all users with usernames or emails matching the search `user` query
-GET /api/v1/search/documents?phrase=:phrase                    |   Get all documents with title or excerpt containing the search `phrase`
-GET /api/v1/search/documents?term=:term&access=:access      |   Get all document owned or accessible by `userId` with title containing the search `phrase`
+GET /api/v1/search/documents?phrase=:phrase                 |   Get all documents with title or excerpt containing the search `phrase`
+GET /api/v1/search/documents?phrase=:phrase&access=:access  |   Get all document owned or accessible by `userId` with title containing the search `phrase`
 
 
 The following are some sample request and response from the API.
