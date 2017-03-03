@@ -91,7 +91,7 @@ const validateUserKeys = (request, isAdmin) => {
  * @param {Boolean} isUpdate switch for when user is admin
  * @returns {Object} array constaining validity and invalid keys
  */
-const validateDocumentKeys = (request, isUpdate) => {
+const validateDocumentKeys = (request) => {
   const requestKeys = Object.keys(request);
   const validSchema = [
     'excerpt',
@@ -100,9 +100,6 @@ const validateDocumentKeys = (request, isUpdate) => {
     'title',
     'authorized'
   ];
-  if (isUpdate) {
-    delete validSchema[3];
-  }
   const badRequestBodyKeys = [];
   for (const key of requestKeys) {
     if (!validSchema.includes(key)) {
@@ -211,13 +208,24 @@ const decryptJwt = (reverseToken) => {
  * @returns {Object} a response json object
  */
 const message = (results, request, response) => {
-  if (results.rows.length === 0) {
+  if (Object.keys(results).length === 0 || results.rows.length === 0) {
     return response.status(404).json({
-      success: false,
+      status: 'fail',
       message: `no results found for your query ${request.query.phrase}`
     });
   }
-  return response.status(200).json({ success: true, results });
+  return response.status(200).json({ status: 'success', data: { results } });
+};
+
+const validRequestBodyCheck = (validation, res, next) => {
+  if (!validation[0]) {
+    return res.status(400).json({
+      status: 'fail',
+      message:
+      `badly formatted request body including ( ${validation[1]} )`
+    });
+  }
+  next();
 };
 
 export default {
@@ -230,6 +238,7 @@ export default {
   filterDocumentsByAccess,
   encryptJwt,
   decryptJwt,
-  message
+  message,
+  validRequestBodyCheck
 };
 
