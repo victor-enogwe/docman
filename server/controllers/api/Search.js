@@ -43,14 +43,11 @@ export default {
    */
   searchUsers(req, res) {
     return searchUsers.findAndCountAll({
-      where: ['MATCH (username, email) AGAINST(?)',
-        req.query.user ? [req.query.user] : ['']],
+      where: ['MATCH (username, email) AGAINST(?)', [req.query.user]],
       attributes: validate.filterUserDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
     })
-    .then((results) => {
-      validate.message(results, req, res);
-    });
+    .then(results => validate.message(results, req, res));
   }
 };

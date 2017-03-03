@@ -1,6 +1,7 @@
 import db          from '../../models/';
 import { encrypt } from '../middlewares/encrypt';
 import validate    from '../middlewares/validate';
+import utils       from '../middlewares/utils';
 
 const userModel = db.User;
 
@@ -16,10 +17,13 @@ const User = {
    */
   create(req, res) {
     return userModel.create(req.body)
-    .then(newUser => res.status(201)
-    .json({ success: true, message: validate.showUserDetails(newUser) }))
+    .then(user => res.status(201)
+    .json({
+      status: 'success',
+      data: { user: validate.showUserDetails(user) }
+    }))
     .catch(error => res.status(400).json({
-      success: false,
+      status: 'fail',
       message: error.errors[0].message
     }));
   },
@@ -34,19 +38,16 @@ const User = {
     userModel.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({
-          success: false,
-          message: 'User Not found'
-        });
+        return utils.noUserFoundMessage(res);
       }
       return user.update(req.body).then(userUpdated => res.status(201)
       .json({
-        success: true,
-        message: validate.showUserDetails(userUpdated)
+        status: 'success',
+        data: { user: validate.showUserDetails(userUpdated) }
       }));
     })
     .catch(error => res.status(500).json({
-      success: false,
+      status: 'error',
       message: error.errors[0].message
     }));
   },
@@ -62,17 +63,16 @@ const User = {
     .then((user) => {
       if (!user) {
         return res.status(404).send({
-          success: false,
+          status: 'fail',
           message: `Delete Failed! User witn ìd:${req.params.id} Not found`
         });
       }
       return user.destroy()
       .then(() => res.status(200).json({
-        success: true,
+        status: 'success',
         message: `Delete Successful! User witn ìd:${req.params.id} deleted`
       }));
-    })
-    .catch(error => res.status(500).json({ success: false, message: error }));
+    });
   },
 
   /**
@@ -89,17 +89,10 @@ const User = {
     })
     .then((users) => {
       if (users.rows.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: 'no users found'
-        });
+        return utils.noUserFoundMessage(res);
       }
-      return res.status(200).json({ success: true, users });
-    })
-    .catch(error => res.status(500).json({
-      success: false,
-      message: error.errors
-    }));
+      return res.status(200).json({ status: 'success', data: { users } });
+    });
   },
 
   /**
@@ -112,20 +105,13 @@ const User = {
     userModel.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'user not found'
-        });
+        return utils.noUserFoundMessage(res);
       }
       return res.status(200).json({
-        success: true,
-        user: validate.showUserDetails(user)
+        status: 'success',
+        data: { user: validate.showUserDetails(user) }
       });
-    })
-    .catch(error => res.status(500).json({
-      success: false,
-      message: error.errors
-    }));
+    });
   },
 
   /**
@@ -141,14 +127,14 @@ const User = {
     .then((user) => {
       if (!user) {
         return res.status(401).json({
-          success: false,
+          status: 'fail',
           message: 'Authentication failed! User not found.'
         });
       }
       const authenticated = user.authenticate(req.body.password);
       if (!authenticated[0]) {
         return res.status(401).json({
-          success: false,
+          status: 'fail',
           message: 'Authentication failed! Wrong password.'
         });
       }
@@ -156,12 +142,10 @@ const User = {
       return user.update({
         auth_token: authToken
       }).then(() => res.status(200).json({
-        success: true,
-        message: 'Enjoy your token!',
-        token: authenticated[1]
+        status: 'success',
+        data: { token: authenticated[1] }
       }));
-    })
-    .catch(error => res.status(500).json({ success: false, message: error }));
+    });
   },
 
   /**
@@ -173,8 +157,7 @@ const User = {
   logout(req, res) {
     userModel.findById(req.decoded.id)
     .then(user => user.update({ auth_token: '' }).then(() => res.status(200)
-    .json({ success: true, message: 'you are now logged out' })))
-    .catch(error => res.status(401).json({ success: false, message: error }));
+    .json({ status: 'success', message: 'you are now logged out' })));
   }
 };
 
