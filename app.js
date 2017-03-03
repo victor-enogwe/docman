@@ -141,7 +141,7 @@ dbConnection.then(connection => connection
   })
   .then(() => server.listen(port, () => Logger
   .warn(`🚧 Admin User Already Created... All Set...
-  🚧 App is Listening on ${port}`)))
+  🚧 App is Listening on ${port}`)));
 }).catch(err => Logger.error(err));
 
 export default app;
