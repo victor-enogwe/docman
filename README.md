@@ -7,89 +7,6 @@
 
 Document Management System provides a restful API for users to create and manage documents giving different privileges based on user roles and managing authentication using JWT.
 
-## Technologies Used
-
-- JavaScript (ES6)
-- Node.js
-- Express
-- Mysql
-- Sequelize ORM.
-
-## Local Development
-
-### Prerequisites includes
-
-- [Msql](https://www.mysql.com/) and
-- [Node.js](http://nodejs.org/) >= v6.8.0.
-
-### Procedure
-
-1. Clone this repository from a terminal `git clone git@github.com:andela-venogwe/docman.git`.
-1. Move into the project directory `cd docman`
-1. Install project dependencies `npm install`
-1. Start the express server `npm start`.
-1. Run test `npm test`.
-
-### Postman Collection
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/93ff8d3afef2a485f06d)
-
-Create a Postman environment and set `url` and `token` variables.
-
-## Deployment
-
-Deploy this project to Heroku by clicking the button below.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/andela-venogwe/docman/tree/staging)
-
-Set the following environment variables below according to your node environment.
-
-### Development Specific environment variables for node environment `development`
-
-- `DEV_HOST` sets the app hostname
-- `DEV_PORT` sets the app connection port address
-- `DEV_DB_NAME` sets the  database name
-- `DEV_DB_HOST` sets the  database hostname
-- `DEV_DB_TYPE` sets the  database type eg `mysql`
-- `DEV_DB_PORT` sets the  database port address
-- `DEV_DB_USER` sets the  database username
-- `DEV_DB_PASS` sets the  database password
-
-### Test Specific environment variables for node environment `test`
-
-- `TEST_HOST` sets the app hostname
-- `TEST_PORT` sets the  app connection port
-- `TEST_DB_NAME` sets the  database name
-- `TEST_DB_HOST` sets the  database hostname
-- `TEST_DB_TYPE` sets the  database type eg `mysql`
-- `TEST_DB_PORT` sets the  database connection port
-- `TEST_DB_USER` sets the  database user
-- `TEST_DB_PASS` sets the  database password
-
-### Production Specific environment variables for node environment `production`
-
-- `HOST` sets the hostname
-- `PORT` sets the port to run the app
-- `DB_NAME` sets the database name
-- `DB_HOST` sets the database host
-- `DB_TYPE` sets the database type eg `mysql`
-- `DB_PORT` sets the  database connection port
-- `DB_USER` sets the database user
-- `DB_PASS` sets the  database password
-
-### Required Environment variables to be set alongsides ones for specific environments
-
-- `NODE_ENV` sets the node environment to run the app.
-- `JWT_SECRET` sets your json web token secret
-- `AUTH_TOKEN` sets the authentication token
-- `ADMIN_USERNAME` sets the admin username
-- `ADMIN_PASSWORD` sets the admin password
-- `ADMIN_FIRSTNAME` sets the admin firstname
-- `ADMIN_LASTNAME` sets the admin lastname
-- `ADMIN_EMAIL` sets the admin email address
-
----
-
 ## API Documentation
 
 The API has routes, each dedicated to a single task that uses HTTP response codes to indicate API status and errors.
@@ -111,15 +28,15 @@ PATCH /api/v1/users/:id                                     |   Update user attr
 DELETE /api/v1/users/:id                                    |   Delete user.
 POST /api/v1/documents/                                     |   Creates a new document instance.
 GET /api/v1/documents/                                      |   Find matching instances of document.
-GET /api/v1/documents?offset=:offset                        |   Find matching instances of document with an offset.
-GET /api/v1/documents?limit=:limit                          |   Find matching instances of document with a limit between `1` and `10`
+GET /api/v1/documents?offset=:offset                        |   Find matching instances of document with an `offset`.
+GET /api/v1/documents?limit=:limit                          |   Find matching instances of document with a `limit` between `1` and `10`
 GET /api/v1/documents/:id                                   |   Find document.
 PATCH /api/v1/documents/:id                                 |   Update document attributes.
 DELETE /api/v1/documents/:id                                |   Delete document.
 GET /api/v1/documents/user/:id                              |   Find all documents belonging to the user.
-GET /api/v1/search/users/:term                              |   Gets all users with usernames or emails matching the search term
-GET /api/v1/search/documents?term=:term                     |   Get all documents with title or excerpt containing the search term
-GET /api/v1/search/documents?term=:term&access=:access      |   Get all document owned or accessible by `userId` with title containing the search term
+GET /api/v1/search/users/:user                              |   Gets all users with usernames or emails matching the search `user` query
+GET /api/v1/search/documents?phrase=:phrase                    |   Get all documents with title or excerpt containing the search `phrase`
+GET /api/v1/search/documents?term=:term&access=:access      |   Get all document owned or accessible by `userId` with title containing the search `phrase`
 
 
 The following are some sample request and response from the API.
@@ -177,9 +94,7 @@ Endpoint for Users API.
     "firstname": "Unique User",
     "lastname": "lastname",
     "email": "uniqueuser@unique.com",
-    "roleId": 1,
-    "createdAt": "2017-02-19T17:34:19.992Z",
-    "updatedAt": "2017-02-19T17:34:19.992Z"
+    "roleId": 1
   }
 }
 ```
@@ -199,23 +114,19 @@ Endpoint for Users API.
 ```json
 [{
   "id": 140,
-  "username": "uyi2",
-  "firstname": "wuyi2AH",
-  "lastname": "hello",
-  "email": "uyi2@uyi.com",
-  "roleId": 1,
-  "createdAt": "2017-02-17T19:41:30.837Z",
-  "updatedAt": "2017-02-17T19:41:30.837Z"
+  "username": "username",
+  "firstname": "firstname",
+  "lastname": "lastname",
+  "email": "email@host.com",
+  "roleId": 1
 },
 {
   "id": 141,
   "username": "uniqueuser",
-  "firstname": "wuyi2AH",
+  "firstname": "firstname",
   "lastname": "hello",
   "email": "uniqueuser@unique.com",
-  "roleId": 1,
-  "createdAt": "2017-02-19T17:34:19.992Z",
-  "updatedAt": "2017-02-19T17:34:19.992Z"
+  "roleId": 1
 }]
 ```
 
@@ -427,10 +338,10 @@ Endpoint for document API.
 ```json
 [{
   "id": 140,
-  "username": "uyi2",
-  "firstname": "wuyi2AH",
-  "lastname": "hello",
-  "email": "uyi2@uyi.com",
+  "username": "username",
+  "firstname": "firstname",
+  "lastname": "lastname",
+  "email": "email@host.com",
   "roleId": 1,
   "createdAt": "2017-02-17T19:41:30.837Z",
   "updatedAt": "2017-02-17T19:41:30.837Z"
@@ -446,3 +357,86 @@ Endpoint for document API.
   "updatedAt": "2017-02-19T17:34:19.992Z"
 }]
 ```
+
+## Technologies Used
+
+- JavaScript (ES6)
+- Node.js
+- Express
+- Mysql
+- Sequelize ORM.
+
+## Local Development
+
+### Prerequisites includes
+
+- [Msql](https://www.mysql.com/) and
+- [Node.js](http://nodejs.org/) >= v6.8.0.
+
+### Procedure
+
+1. Clone this repository from a terminal `git clone git@github.com:andela-venogwe/docman.git`.
+1. Move into the project directory `cd docman`
+1. Install project dependencies `npm install`
+1. Start the express server `npm start`.
+1. Run test `npm test`.
+
+### Postman Collection
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/93ff8d3afef2a485f06d)
+
+Create a Postman environment and set `url` and `token` variables.
+
+## Deployment
+
+Deploy this project to Heroku by clicking the button below.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/andela-venogwe/docman/tree/staging)
+
+Set the following environment variables below according to your node environment.
+
+### Development Specific environment variables for node environment `development`
+
+- `DEV_HOST` sets the app hostname
+- `DEV_PORT` sets the app connection port address
+- `DEV_DB_NAME` sets the  database name
+- `DEV_DB_HOST` sets the  database hostname
+- `DEV_DB_TYPE` sets the  database type eg `mysql`
+- `DEV_DB_PORT` sets the  database port address
+- `DEV_DB_USER` sets the  database username
+- `DEV_DB_PASS` sets the  database password
+
+### Test Specific environment variables for node environment `test`
+
+- `TEST_HOST` sets the app hostname
+- `TEST_PORT` sets the  app connection port
+- `TEST_DB_NAME` sets the  database name
+- `TEST_DB_HOST` sets the  database hostname
+- `TEST_DB_TYPE` sets the  database type eg `mysql`
+- `TEST_DB_PORT` sets the  database connection port
+- `TEST_DB_USER` sets the  database user
+- `TEST_DB_PASS` sets the  database password
+
+### Production Specific environment variables for node environment `production`
+
+- `HOST` sets the hostname
+- `PORT` sets the port to run the app
+- `DB_NAME` sets the database name
+- `DB_HOST` sets the database host
+- `DB_TYPE` sets the database type eg `mysql`
+- `DB_PORT` sets the  database connection port
+- `DB_USER` sets the database user
+- `DB_PASS` sets the  database password
+
+### Required Environment variables to be set alongsides ones for specific environments
+
+- `NODE_ENV` sets the node environment to run the app.
+- `JWT_SECRET` sets your json web token secret
+- `AUTH_TOKEN` sets the authentication token
+- `ADMIN_USERNAME` sets the admin username
+- `ADMIN_PASSWORD` sets the admin password
+- `ADMIN_FIRSTNAME` sets the admin firstname
+- `ADMIN_LASTNAME` sets the admin lastname
+- `ADMIN_EMAIL` sets the admin email address
+
+---
