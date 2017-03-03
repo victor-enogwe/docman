@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/andela-venogwe/docman.svg?branch=staging)](https://travis-ci.org/andela-venogwe/docman)
 [![Code Climate](https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/gpa.svg)](https://codeclimate.com/repos/58aec2c282269f0292000169/feed)
 [![Issue Count](https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/issue_count.svg)](https://codeclimate.com/repos/58aec2c282269f0292000169/feed)
-[![Coverage Status](https://coveralls.io/repos/github/andela-venogwe/docman/badge.svg?branch=staging)](https://coveralls.io/github/andela-venogwe/docman?branch=feature%2F140457059%2Froutes-and-controllers)
+[![Coverage Status](https://coveralls.io/repos/github/andela-venogwe/docman/badge.svg?branch=staging)](https://coveralls.io/github/andela-venogwe/docman?branch=staging)
 
 Document Management System provides a restful API for users to create and manage documents giving different privileges based on user roles and managing authentication using JWT.
 
