@@ -11,9 +11,36 @@ Document Management System provides a restful API for users to create and manage
 
 The API has routes, each dedicated to a single task that uses HTTP response codes to indicate API status and errors.
 
-## Authentication
+#### *Features*
+
+1. **Authentication**
 
 Users are assigned a token when signup or signin. This token is needed for subsequent HTTP requests to the API for authentication and can be attached as values to the header's `x-acess-token` key. API requests made without authentication will fail with the status code of `401`.
+
+- It uses JWT for authentication.  
+- It generates a token and returns to the client.  
+- It verifies the token on every request to authenticated endpoints.
+
+2. **Users**
+- It allows users to be created.  
+- It sets a newly created user's role to `regular` by default.   
+- It allows only the created user and the admin to edit, and update its information.   
+- All registered users can be retrieved by the admin user.
+
+3. **Roles**
+- It ensures that users have a role.   
+- It ensures users roles could be `admin` or `regular`.   
+- It ensures new roles can be created, updated and deleted by an admin user.   
+- It returns all roles to an admin user.
+
+4. **Documents**
+
+- It allows new documents to be created/saved by users.  
+- It ensures all documents have an access defined (default access is `public`).  
+- It allows only admin users to retrieve all documents regardless of the document access.  
+- It ensures ONLY the user's private and others publicly accessed documents to be retrieved by the user.     
+- It ensures only authenticated users can delete, edit and update documents they own.   
+- It allows admin to delete any document regardless of the document access level. 
 
 ## Below are the API endpoints and their functions
 
