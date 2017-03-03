@@ -9,7 +9,7 @@ export default {
   dontDeleteDefaultAdmin(req, res, next) {
     if (parseInt(req.params.id, 10) === 1) {
       return res.status(403).send({
-        success: false,
+        status: 'fail',
         message: 'You cannot delete the default admin account' });
     }
     next();
@@ -23,9 +23,9 @@ export default {
    * @returns {Object} validity response
    */
   dontChangeDefaultAdminRole(req, res, next) {
-    if (req.body.roleId && req.params.id === 1) {
+    if (+req.body.roleId && +req.params.id === 1 && +req.decoded.id === 1) {
       return res.status(403).send({
-        success: false,
+        status: 'fail',
         message: 'You cannot change the default admin\'s role id'
       });
     }
@@ -42,7 +42,7 @@ export default {
   isValidRequestId(req, res, next) {
     if (req.params.id && isNaN(parseInt(req.params.id, 10))) {
       return res.status(406).json({
-        success: false,
+        status: 'fail',
         message: 'parameter supplied should be a number'
       });
     }
@@ -59,7 +59,7 @@ export default {
   canUpdateOrFindUserOrDocuments(req, res, next) {
     if (req.decoded.roleId !== 0 && (+req.params.id !== req.decoded.id)) {
       return res.status(401).send({
-        success: false,
+        status: 'fail',
         message: 'You don\'t have authorization for this action'
       });
     }
@@ -97,17 +97,17 @@ export default {
   getSearchPhrase(req, res, next) {
     if (!req.query.phrase) {
       return res.status(400).json({
-        success: false,
+        status: 'fail',
         message: 'Please supply a query phrase parameter.'
       });
     } else if (!/[A-Za-z0-9]/i.test(req.query.phrase)) {
       return res.status(400).json({
-        success: false,
+        status: 'fail',
         message: 'Query phrase parameter can only be aplhanumeric.'
       });
     } else if (req.query.phrase.length < 4) {
       return res.status(400).json({
-        success: false,
+        status: 'fail',
         message: 'Query phrase parameter length should be greater than 4.'
       });
     }
@@ -122,17 +122,17 @@ export default {
    * @returns {Object} validity response
    */
   searchQueryAccess(req, res, next) {
-    const accepted = ['public', 'private', 'users'];
+    const accepted = ['public', 'private', 'user'];
     if (req.query.access && !accepted.includes(req.query.access)) {
       return res.status(400).json({
-        success: false,
+        status: 'fail',
         message: 'Query access can only be public, private or user.'
       });
     }
     let user = '';
     if ((req.params.id && isNaN(req.params.id)) || req.params.id < 1) {
       return res.status(400).json({
-        success: false,
+        status: 'fail',
         message: 'parameter id can only be a positive number greater than 0.'
       });
     } else if (req.params.id && !isNaN(+req.params.id)) {
@@ -167,10 +167,38 @@ export default {
   searchQueryUsers(req, res, next) {
     if (!req.query.user) {
       return res.status(400).json({
-        success: false,
+        status: 'fail',
         message: 'Please supply a search query parameter for user.'
       });
     }
     next();
+  },
+
+  loginMessage(res) {
+    return res.status(401).json({
+      status: 'fail',
+      message: 'you need to login.'
+    });
+  },
+
+  authorizationFailedMessage(res) {
+    return res.status(401).send({
+      status: 'fail',
+      message: 'You don\'t have authorization to perform this action'
+    });
+  },
+
+  documentsNotFoundMessage(res) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'No document found'
+    });
+  },
+
+  noUserFoundMessage(res) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'No user found'
+    });
   }
 };
