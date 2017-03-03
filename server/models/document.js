@@ -69,14 +69,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
   }, {
-    // indexes: [
-    //   // add a FULLTEXT index
-    //   {
-    //     type: 'FULLTEXT',
-    //     name: 'Documents_Index',
-    //     fields: ['title', 'excerpt']
-    //   }
-    // ],
     classMethods: {
       validateContent(document) {
         const regexContent = new RegExp(
