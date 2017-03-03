@@ -8,7 +8,7 @@ describe('Document Api', () => {
   let regularUser, adminToken, regularUserToken, privateDocument,
     publicDocument;
   before((done) => {
-    db.User.destroy({ where: { roleId: 1 } })
+    db.sequelize.sync().then(() => db.User.destroy({ where: { roleId: 1 } })
     .then(() => db.Document.destroy({ where: {} }))
     .then(() => {
       app.post('/login')
@@ -33,7 +33,7 @@ describe('Document Api', () => {
           });
         });
       });
-    });
+    }));
   });
   describe('Create: ', () => {
     it('should create a new document', (done) => {
