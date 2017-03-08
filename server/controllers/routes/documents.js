@@ -1,7 +1,7 @@
 import express   from 'express';
 import Documents from '../api/Documents';
 import auth      from '../middlewares/auth';
-import utils      from '../middlewares/utils';
+import utils     from '../middlewares/utils';
 
 const documents = express.Router();
 

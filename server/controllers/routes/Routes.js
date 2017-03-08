@@ -1,7 +1,7 @@
-import home from './home';
-import users from './users';
+import home      from './home';
+import users     from './users';
 import documents from './documents';
-import search from './search';
+import search    from './search';
 
 const Routes = {
   home,

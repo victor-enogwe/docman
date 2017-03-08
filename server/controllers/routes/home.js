@@ -1,6 +1,6 @@
 import express from 'express';
-import User     from '../api/User';
-import auth     from '../middlewares/auth';
+import User    from '../api/User';
+import auth    from '../middlewares/auth';
 
 const home = express.Router();
 
