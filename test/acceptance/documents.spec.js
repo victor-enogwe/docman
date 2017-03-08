@@ -7,7 +7,8 @@ let regularUser, adminToken, regularUserToken, privateDocument, publicDocument;
 
 describe('Document Api', () => {
   before((done) => {
-    app.post('/login').send({
+    db.sequelize.sync()
+    .then(() => app.post('/login').send({
       username: testData.adminUser.username,
       password: testData.adminUser.password
     })
@@ -25,7 +26,7 @@ describe('Document Api', () => {
     .then((res) => {
       regularUserToken = res.body.data.token;
     })
-    .then(() => done());
+    .then(() => done()));
   });
 
   after(() => db.User.destroy({ where: { roleId: 1 } })
