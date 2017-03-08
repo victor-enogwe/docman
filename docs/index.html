@@ -85,6 +85,382 @@
 
 
 
+    <section class="readme-section">
+        <article><h1>Document Management System API</h1><p><a href="https://travis-ci.org/andela-venogwe/docman"><img src="https://travis-ci.org/andela-venogwe/docman.svg?branch=staging" alt="Build Status"></a>
+<a href="https://codeclimate.com/repos/58aec2c282269f0292000169/feed"><img src="https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/gpa.svg" alt="Code Climate"></a>
+<a href="https://codeclimate.com/repos/58aec2c282269f0292000169/feed"><img src="https://codeclimate.com/repos/58aec2c282269f0292000169/badges/7f69e0e8445c725eecd8/issue_count.svg" alt="Issue Count"></a>
+<a href="https://coveralls.io/github/andela-venogwe/docman?branch=staging"><img src="https://coveralls.io/repos/github/andela-venogwe/docman/badge.png?branch=staging" alt="Coverage Status"></a></p>
+<p>Document Management System provides a restful API for users to create and manage documents giving different privileges based on user roles and managing authentication using JWT. The API has routes, each dedicated to a single task that uses HTTP response codes to indicate API status and errors.</p>
+<hr>
+<h2><em>Features</em></h2><h3>Authentication</h3><p>Users are assigned a token when signup or signin. This token is needed for subsequent HTTP requests to the API for authentication and can be attached as values to the header's <code>x-acess-token</code> key. API requests made without authentication will fail with the status code of <code>401</code>.</p>
+<ul>
+<li>It uses JWT for authentication.</li>
+<li>It generates a token and returns to the client.</li>
+<li>It verifies the token on every request to authenticated endpoints.</li>
+</ul>
+<h3>Users</h3><ul>
+<li>It allows users to be created.</li>
+<li>It sets a newly created user's roleÌd to <code>1</code>(a regular user) by default.</li>
+<li>Admin users are assigned a roleId of <code>0</code>.</li>
+<li>It allows the created user and the admin to edit, and update thier information.</li>
+<li>All registered users can be retrieved by the admin user.</li>
+</ul>
+<h3>Roles</h3><ul>
+<li>It ensures that users have a role.</li>
+<li>It ensures users roleId could be <code>0</code>(admin) or <code>1</code>(regular user).</li>
+<li>It allows an admin to update a user's role.</li>
+</ul>
+<h3>Documents</h3><ul>
+<li>It allows new documents to be created/saved by users.</li>
+<li>It ensures all documents have an access defined (default access is <code>private</code>).</li>
+<li>It allows only admin users to retrieve all documents regardless of the document access.</li>
+<li>It ensures that only the user can retrieve their private documents.</li>
+<li>It ensures only authenticated users can delete, edit and update documents they own.</li>
+<li>It allows admin to delete any document regardless of the document access level.</li>
+</ul>
+<hr>
+<h2>API Endpoints And Functions</h2><table>
+<thead>
+<tr>
+<th>EndPoints</th>
+<th>Functionality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /login</td>
+<td>Logs a user in.</td>
+</tr>
+<tr>
+<td>POST /logout</td>
+<td>Logs a user out.</td>
+</tr>
+<tr>
+<td>POST /api/v1/users/</td>
+<td>Creates a new user.</td>
+</tr>
+<tr>
+<td>GET /api/v1/users/</td>
+<td>Find matching instances of user.</td>
+</tr>
+<tr>
+<td>GET /api/v1/users/:id</td>
+<td>Find user.</td>
+</tr>
+<tr>
+<td>PATCH /api/v1/users/:id</td>
+<td>Update user attributes.</td>
+</tr>
+<tr>
+<td>DELETE /api/v1/users/:id</td>
+<td>Delete user.</td>
+</tr>
+<tr>
+<td>POST /api/v1/documents/</td>
+<td>Creates a new document instance.</td>
+</tr>
+<tr>
+<td>GET /api/v1/documents/</td>
+<td>Find matching instances of document.</td>
+</tr>
+<tr>
+<td>GET /api/v1/documents?offset=:offset</td>
+<td>Find matching instances of document with an <code>offset</code>.</td>
+</tr>
+<tr>
+<td>GET /api/v1/documents?limit=:limit</td>
+<td>Find matching instances of document with a <code>limit</code> between <code>1</code> and <code>10</code></td>
+</tr>
+<tr>
+<td>GET /api/v1/documents/:id</td>
+<td>Find document.</td>
+</tr>
+<tr>
+<td>PATCH /api/v1/documents/:id</td>
+<td>Update document attributes.</td>
+</tr>
+<tr>
+<td>DELETE /api/v1/documents/:id</td>
+<td>Delete document.</td>
+</tr>
+<tr>
+<td>GET /api/v1/documents/user/:id</td>
+<td>Find all documents belonging to the user.</td>
+</tr>
+<tr>
+<td>GET /api/v1/search/users/:user</td>
+<td>Gets all users with usernames or emails matching the search <code>user</code> query</td>
+</tr>
+<tr>
+<td>GET /api/v1/search/documents?phrase=:phrase</td>
+<td>Get all documents with title or excerpt containing the search <code>phrase</code></td>
+</tr>
+<tr>
+<td>GET /api/v1/search/documents?phrase=:phrase&amp;access=:access</td>
+<td>Get all document owned or accessible by <code>userId</code> with title containing the search <code>phrase</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Sample API Request And Response</h2><h3>Users EndPoint</h3><p>Endpoint for Users API.</p>
+<h4>Create User</h4><h5>Create User Request Body</h5><ul>
+<li>Endpoint: POST: <code>api/v1/users</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;username&quot;: &quot;uniqueuser&quot;,
+  &quot;firstname&quot;: &quot;Unique User&quot;,
+  &quot;lastname&quot;: &quot;lastname&quot;,
+  &quot;email&quot;: &quot;uniqueuser@unique.com&quot;,
+  &quot;RoleId&quot;: 1,
+  &quot;password&quot;: &quot;password&quot;,
+  &quot;password_confirmation&quot;: &quot;password&quot;
+}</code></pre><h5>Create User Response Body</h5><ul>
+<li><p>Status: <code>200</code></p>
+</li>
+<li><p>Body <code>(application/json)</code></p>
+</li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;success&quot;: true,
+  &quot;message&quot;: {
+    &quot;id&quot;: 141,
+    &quot;username&quot;: &quot;uniqueuser&quot;,
+    &quot;firstname&quot;: &quot;Unique User&quot;,
+    &quot;lastname&quot;: &quot;lastname&quot;,
+    &quot;email&quot;: &quot;uniqueuser@unique.com&quot;,
+    &quot;roleId&quot;: 1
+  }
+}</code></pre><h4>Get Users</h4><h5>Get Users Request Body</h5><ul>
+<li>Endpoint: GET: <code>api/v1/users</code></li>
+<li>Requires: Authentication, Admin Role</li>
+</ul>
+<h5>Get Users Response Body</h5><ul>
+<li>Status: <code>200</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>[{
+  &quot;id&quot;: 140,
+  &quot;username&quot;: &quot;username&quot;,
+  &quot;firstname&quot;: &quot;firstname&quot;,
+  &quot;lastname&quot;: &quot;lastname&quot;,
+  &quot;email&quot;: &quot;email@host.com&quot;,
+  &quot;roleId&quot;: 1
+},
+{
+  &quot;id&quot;: 141,
+  &quot;username&quot;: &quot;uniqueuser&quot;,
+  &quot;firstname&quot;: &quot;firstname&quot;,
+  &quot;lastname&quot;: &quot;hello&quot;,
+  &quot;email&quot;: &quot;uniqueuser@unique.com&quot;,
+  &quot;roleId&quot;: 1
+}]</code></pre><h3>Documents Endpoint</h3><p>Endpoint for document API.</p>
+<h4>Get All Documents</h4><h5>Get All Documents Request Body</h5><ul>
+<li><p>Endpoint: GET: <code>/api/v1/documents</code></p>
+</li>
+<li><p>Requires: Authentication, Admin Role</p>
+</li>
+</ul>
+<h5>Get All DOcuments Response Body</h5><ul>
+<li>Status: <code>200</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>[{
+    &quot;id&quot;: 45,
+    &quot;title&quot;: &quot;Another new document&quot;,
+    &quot;content&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;access&quot;: &quot;public&quot;,
+    &quot;creatorId&quot;: 29,
+    &quot;createdAt&quot;: &quot;2017-02-17T17:40:45.146Z&quot;,
+    &quot;updatedAt&quot;: &quot;2017-02-17T17:40:45.146Z&quot;
+  },
+  {
+    &quot;id&quot;: 44,
+    &quot;title&quot;: &quot;New Title&quot;,
+    &quot;content&quot;: &quot;The unique content of a document does not lie in the presence of the word unique&quot;,
+    &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;access&quot;: &quot;private&quot;,
+    &quot;creatorId&quot;: 1,
+    &quot;createdAt&quot;: &quot;2017-02-06T22:55:43.747Z&quot;,
+    &quot;updatedAt&quot;: &quot;2017-02-06T22:55:43.747Z&quot;
+  }]</code></pre><h4>Create Document</h4><h5>Create Document Request Body</h5><ul>
+<li>Endpoint: POST: <code>/api/v1/documents</code></li>
+<li>Requires: Authentication</li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;title&quot;: &quot;Just a Title&quot;,
+  &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+  &quot;content&quot;: &quot;This placeholder should not always be a lorem generated document&quot;,
+  &quot;creatorId&quot;: 1,
+  &quot;access&quot;: &quot;user&quot;
+}</code></pre><h5>Create Document Response Body</h5><ul>
+<li>Status: <code>201: Created</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;id&quot;: 1,
+  &quot;title&quot;: &quot;Just a Title&quot;,
+  &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+  &quot;content&quot;: &quot;This placeholder should not always be a lorem ipsum generated document&quot;,
+  &quot;creatorId&quot;: 1,
+  &quot;access&quot;: &quot;user&quot;,
+  &quot;createdAt&quot;: &quot;2017-02-05T05:51:51.217Z&quot;,
+  &quot;updatedAt&quot;: &quot;2016-02-05T05:51:51.217Z&quot;
+}</code></pre><h4>Get Document</h4><h5>Get Docucment Request Body</h5><ul>
+<li><p>Endpoint: GET: <code>/api/v1/documents/:id</code></p>
+</li>
+<li><p>Requires: Authentication</p>
+</li>
+</ul>
+<h5>Get Document Response Body</h5><ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;id&quot;: 1,
+  &quot;title&quot;: &quot;Just a Title&quot;,
+  &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+  &quot;content&quot;: &quot;This placeholder should not always be a lorem ipsum generated document&quot;,
+  &quot;creatorId&quot;: 1,
+  &quot;access&quot;: &quot;private&quot;,
+  &quot;createdAt&quot;: &quot;2017-02-05T05:51:51.217Z&quot;,
+  &quot;updatedAt&quot;: &quot;2016-02-05T05:51:51.217Z&quot;
+}</code></pre><h4>Edit Document</h4><h5>Edit Document Request Body</h5><ul>
+<li>Endpoint: PATCH: <code>/api/v1/documents/:id</code></li>
+<li>Requires: Authentication</li>
+<li>Body <code>(application/json)</code>:</li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;title&quot;: &quot;Updated Title&quot;,
+}</code></pre><h5>Edit Document Response Body</h5><ul>
+<li>Status: <code>200</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>  {
+    &quot;id&quot;: 1,
+    &quot;title&quot;: &quot;Updated Title&quot;,
+    &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;content&quot;: &quot;This placeholder should not always be a lorem ipsum generated document&quot;,
+    &quot;creatorId&quot;: 1,
+    &quot;access&quot;: &quot;private&quot;,
+    &quot;createdAt&quot;: &quot;2017-02-05T05:51:51.217Z&quot;,
+    &quot;updatedAt&quot;: &quot;2016-02-05T05:51:51.217Z&quot;
+  }</code></pre><h4>Delete Document</h4><h5>Delete Document Request Body</h5><ul>
+<li>Endpoint: DELETE: <code>/api/v1/documents/:id</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h5>Delete Document Response Body</h5><ul>
+<li><p>Status: <code>200</code></p>
+</li>
+<li><p>Body <code>(application/json)</code></p>
+</li>
+</ul>
+<pre class="prettyprint source lang-json"><code>{ &quot;success&quot;: true,
+  &quot;message&quot;: &quot;Document with id:42 deleted&quot;
+}</code></pre><h3>Search</h3><h4>Documents Search</h4><h5>Documents Search Request Body</h5><ul>
+<li><p>Endpoint: GET: <code>/api/v1/search/documents?phrase=:phrase</code></p>
+</li>
+<li><p>Requires: Authentication</p>
+</li>
+</ul>
+<h5>Documents Search Response Body</h5><ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>[{
+    &quot;id&quot;: 45,
+    &quot;title&quot;: &quot;Another new document&quot;,
+    &quot;content&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;access&quot;: &quot;public&quot;,
+    &quot;creatorId&quot;: 29,
+    &quot;createdAt&quot;: &quot;2017-02-17T17:40:45.146Z&quot;,
+    &quot;updatedAt&quot;: &quot;2017-02-17T17:40:45.146Z&quot;
+  },
+  {
+    &quot;id&quot;: 44,
+    &quot;title&quot;: &quot;New Title&quot;,
+    &quot;excerpt&quot;: &quot;Test Epic things like lorem etc&quot;,
+    &quot;content&quot;: &quot;The unique content of a document does not lie in the presence of the word unique&quot;,
+    &quot;access&quot;: &quot;1&quot;,
+    &quot;creatorId&quot;: 1,
+    &quot;createdAt&quot;: &quot;2017-02-06T22:55:43.747Z&quot;,
+    &quot;updatedAt&quot;: &quot;2017-02-06T22:55:43.747Z&quot;
+  }]</code></pre><h4>Users Search</h4><h5>Users Search Request Body</h5><ul>
+<li>Endpoint: GET: <code>/api/v1/search/users?user:user</code></li>
+<li>Requires: Authentication, Admin Role</li>
+</ul>
+<h5>Users Search Response Body</h5><ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+<pre class="prettyprint source lang-json"><code>[{
+  &quot;id&quot;: 140,
+  &quot;username&quot;: &quot;username&quot;,
+  &quot;firstname&quot;: &quot;firstname&quot;,
+  &quot;lastname&quot;: &quot;lastname&quot;,
+  &quot;email&quot;: &quot;email@host.com&quot;,
+  &quot;roleId&quot;: 1,
+  &quot;createdAt&quot;: &quot;2017-02-17T19:41:30.837Z&quot;,
+  &quot;updatedAt&quot;: &quot;2017-02-17T19:41:30.837Z&quot;
+},
+{
+  &quot;id&quot;: 141,
+  &quot;username&quot;: &quot;uniqueuser&quot;,
+  &quot;firstname&quot;: &quot;teller&quot;,
+  &quot;lastname&quot;: &quot;soloing&quot;,
+  &quot;email&quot;: &quot;uniqueuser@unique.com&quot;,
+  &quot;roleId&quot;: 1,
+  &quot;createdAt&quot;: &quot;2017-02-19T17:34:19.992Z&quot;,
+  &quot;updatedAt&quot;: &quot;2017-02-19T17:34:19.992Z&quot;
+}]</code></pre><hr>
+<h2>Technologies Used</h2><ul>
+<li>JavaScript (ES6)</li>
+<li>Node.js</li>
+<li>Express</li>
+<li>Mysql</li>
+<li>Sequelize ORM.</li>
+</ul>
+<hr>
+<h2>Local Development</h2><h3>Prerequisite Installations</h3><ul>
+<li><a href="https://www.mysql.com/">Msql</a> and</li>
+<li><a href="http://nodejs.org/">Node.js</a> &gt;= v6.8.0.</li>
+</ul>
+<h3>Procedure</h3><ol>
+<li>Clone this repository from a terminal <code>git clone git@github.com:andela-venogwe/docman.git</code>.</li>
+<li>Move into the project directory <code>cd docman</code></li>
+<li>Install project dependencies <code>npm install</code></li>
+<li>Start the express server <code>npm start</code>.</li>
+<li>Run test <code>npm test</code>.</li>
+</ol>
+<hr>
+<h2>Postman Collection</h2><p><a href="https://www.getpostman.com/collections/93ff8d3afef2a485f06d"><img src="https://run.pstmn.io/button.svg" alt="Run in Postman"></a></p>
+<p>Create a Postman environment and set <code>url</code> and <code>token</code> variables.</p>
+<hr>
+<h2>Deployment</h2><p>Deploy this project to Heroku by clicking the button below.</p>
+<p><a href="https://heroku.com/deploy?template=https://github.com/andela-venogwe/docman/tree/staging"><img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy"></a></p>
+<p>Set the following environment variables below according to your node environment.</p>
+<h3>Environment variables</h3><ul>
+<li><code>PORT</code> sets the port to run the app</li>
+<li><code>DB_NAME</code> sets the database name</li>
+<li><code>DB_HOST</code> sets the database host</li>
+<li><code>DB_TYPE</code> sets the database type eg <code>mysql</code></li>
+<li><code>DB_PORT</code> sets the  database connection port</li>
+<li><code>DB_USER</code> sets the database user</li>
+<li><code>DB_PASS</code> sets the  database password</li>
+<li><code>NODE_ENV</code> sets the node environment to run the app.</li>
+<li><code>JWT_SECRET</code> sets your json web token secret</li>
+<li><code>AUTH_TOKEN</code> sets the authentication token</li>
+<li><code>ADMIN_USERNAME</code> sets the admin username</li>
+<li><code>ADMIN_PASSWORD</code> sets the admin password</li>
+<li><code>ADMIN_FIRSTNAME</code> sets the admin firstname</li>
+<li><code>ADMIN_LASTNAME</code> sets the admin lastname</li>
+<li><code>ADMIN_EMAIL</code> sets the admin email address</li>
+</ul></article>
+    </section>
+
 
 
 
@@ -132,7 +508,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 	
-		on 2017-03-08T14:08:49+01:00
+		on 2017-03-08T16:07:05+01:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
