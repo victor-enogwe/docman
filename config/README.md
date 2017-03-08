@@ -73,8 +73,6 @@ GET /api/v1/search/documents?phrase=:phrase&access=:access  |   Get all document
 
 ### Users EndPoint
 
-Endpoint for Users API.
-
 #### Create User
 
 ##### Create User Request Body
@@ -146,8 +144,6 @@ Endpoint for Users API.
 ```
 
 ### Documents Endpoint
-
-Endpoint for document API.
 
 #### Get All Documents
 
