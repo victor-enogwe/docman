@@ -17,11 +17,12 @@ dotenv.config();
 debug('docman:app');
 Logger.useDefaults();
 
+const environment = process.env.NODE_ENV ? `_${process.env.NODE_ENV}` : '';
 const app = express();
 const dbHost = dbConfig.host;
 const dbUser = dbConfig.user;
 const dbPassword = dbConfig.password;
-const database = dbConfig.database;
+const database = `${dbConfig.database}${environment}`;
 const dbConnection = mysql.createConnection({
   host: dbHost,
   user: dbUser,
@@ -114,35 +115,39 @@ dbConnection.then(connection => connection
 .query(`CREATE DATABASE IF NOT EXISTS ${database}`))
 .then(() => Logger
 .warn('🚧 Initial Database Connection Successful. App Booting Up ...'))
-.then(() => {
-  db.sequelize.sync()
-  .then(() => db.User.findOne({ where: {
-    $or: [{
-      username: process.env.ADMIN_USERNAME
-    }, { email: process.env.ADMIN_EMAIL }]
-  } }))
-  .then((userExists) => {
-    if (!userExists) {
-      return db.User.create({
-        roleId: 0,
-        username: process.env.ADMIN_USERNAME,
-        firstname: process.env.ADMIN_FIRSTNAME,
-        lastname: process.env.ADMIN_LASTNAME,
-        email: process.env.ADMIN_EMAIL,
-        password: process.env.ADMIN_PASSWORD,
-        password_confirmation: process.env.ADMIN_PASSWORD,
-        password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
-        bcrypt.genSaltSync(10)),
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      }).then(() => db.sequelize.query(query.query, { raw: true }));
-    }
-    return 'Admin User Already Created... All Set...';
-  })
-  .then(() => server.listen(port, () => Logger
-  .warn(`🚧 Admin User Already Created... All Set...
-  🚧 App is Listening on ${port}`)));
-}).catch(err => Logger.error(err));
+.then(() => db.sequelize.sync()
+.then(() => db.User.findOne({ where: {
+  $or: [{
+    username: process.env.ADMIN_USERNAME
+  }, { email: process.env.ADMIN_EMAIL }]
+} }))
+.then((userExists) => {
+  if (!userExists) {
+    return db.User.create({
+      roleId: 0,
+      username: process.env.ADMIN_USERNAME,
+      firstname: process.env.ADMIN_FIRSTNAME,
+      lastname: process.env.ADMIN_LASTNAME,
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASSWORD,
+      password_confirmation: process.env.ADMIN_PASSWORD,
+      password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
+      bcrypt.genSaltSync(10)),
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    });
+  }
+})
+.then((user) => {
+  if (user) {
+    return db.Document.create(query.userDocument)
+    .then(() => db.sequelize.query(query.query, { raw: true }));
+  }
+}))
+.then(() => server.listen(port))
+.then(() => Logger
+.warn(`🚧 App is Listening on ${port}`))
+.catch(err => Logger.error(err));
 
 export default app;
 
