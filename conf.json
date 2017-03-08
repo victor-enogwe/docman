@@ -6,7 +6,7 @@
     "source": {
         "include": ["./"],
         "includePattern": ".+\\.js$",
-        "excludePattern": "(documentation|node_modules|coverage|config)"
+        "excludePattern": "(docs|node_modules|coverage|config)"
     },
     "plugins": [],
     "templates": {
@@ -24,7 +24,7 @@
     "opts": {
         "template": "./node_modules/ink-docstrap/template",
         "encoding": "utf8",
-        "destination": "documentation",
+        "destination": "docs",
         "recurse": true,
         "private": true
     }
