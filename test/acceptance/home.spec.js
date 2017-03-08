@@ -1,4 +1,4 @@
-import helper    from '../helpers/index.helpers';
+import helper from '../helpers/index.helpers';
 
 const app = helper.app;
 
