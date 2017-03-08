@@ -5,52 +5,44 @@ const app = helper.app;
 const testData = helper.testData;
 let adminToken, regularUserToken, regularUser;
 
-
 describe('Search', () => {
   before((done) => {
-    db.User.destroy({
-      where: {
-        roleId: 1
-      }
-    }).then(() => {
-      app.post('/login')
-      .send({
-        username: testData.adminUser.username,
-        password: testData.adminUser.password
-      })
-      .end((error, response) => {
-        adminToken = response.body.data.token;
-        app.post('/api/v1/documents')
-        .set({ 'x-access-token': adminToken })
-        .send(testData.userDocument)
-        .end(() => {
-          app.post('/api/v1/users')
-          .send(testData.validUser)
-          .end((err, res) => {
-            regularUser = res.body.data.user;
-            app.post('/login')
-            .send({
-              username: testData.validUser.username,
-              password: testData.validUser.password
-            })
-            .end((err, res) => {
-              regularUserToken = res.body.data.token;
-              app.post('/api/v1/documents')
-              .set({ 'x-access-token': regularUserToken })
-              .send(testData.userDocument)
-              .end(() => {
-                testData.userDocument.access = 'public';
-                app.post('/api/v1/documents')
-                .set({ 'x-access-token': regularUserToken })
-                .send(testData.userDocument)
-                .end(() => done());
-              });
+    app.post('/login')
+    .send({
+      username: testData.adminUser.username,
+      password: testData.adminUser.password
+    })
+    .then((response) => {
+      adminToken = response.body.data.token;
+      testData.userDocument.creatorId = 1;
+      db.Document.create(testData.userDocument)
+      .then(() => {
+        app.post('/api/v1/users')
+        .send(testData.validUser)
+        .then((res) => {
+          regularUser = res.body.data.user;
+          app.post('/login')
+          .send({
+            username: testData.validUser.username,
+            password: testData.validUser.password
+          })
+          .then((res) => {
+            regularUserToken = res.body.data.token;
+            testData.userDocument.creatorId = regularUser.id;
+            db.Document.create(testData.userDocument)
+            .then(() => {
+              testData.userDocument.access = 'public';
+              db.Document.create(testData.userDocument)
+              .then(() => done());
             });
           });
         });
       });
     });
   });
+
+  after(() => db.User.destroy({ where: { roleId: 1 } })
+  .then(() => db.Document.destroy({ where: {} })));
 
   describe('Documents: ', () => {
     it('should return documents for search', (done) => {
@@ -148,7 +140,7 @@ describe('Search', () => {
       app
       .get(`/api/v1/search/documents/user/1?phrase=${title}`)
       .set({ 'x-access-token': regularUserToken })
-      .end((error, response) => {
+      .then((response) => {
         response.body.status.should.equal('success');
         response.body.data.results.count.should.be.aboveOrEqual(1);
         done();
@@ -185,10 +177,10 @@ describe('Search', () => {
     (done) => {
       const title = testData.userDocument.title;
       app
-      .get(`/api/v1/search/documents/users/${regularUser.id}?phrase=${title.substring(0,9)}`)
+      .get(`/api/v1/search/documents/users/
+${regularUser.id}?phrase=${title.substring(0, 9)}`)
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        console.log(response.body, title)
         const status = response.status === 404 || response.status === 200;
         status.should.equal(true);
         done();

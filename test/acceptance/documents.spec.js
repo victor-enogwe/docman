@@ -3,38 +3,34 @@ import db     from '../../server/models/index';
 
 const app = helper.app;
 const testData = helper.testData;
+let regularUser, adminToken, regularUserToken, privateDocument, publicDocument;
 
 describe('Document Api', () => {
-  let regularUser, adminToken, regularUserToken, privateDocument,
-    publicDocument;
   before((done) => {
-    db.sequelize.sync().then(() => db.User.destroy({ where: { roleId: 1 } })
-    .then(() => db.Document.destroy({ where: {} }))
-    .then(() => {
-      app.post('/login')
-      .send({
-        username: testData.adminUser.username,
-        password: testData.adminUser.password
-      })
-      .end((err, res) => {
-        adminToken = res.body.data.token;
-        app.post('/api/v1/users')
-        .send(testData.validUser)
-        .end((error, response) => {
-          regularUser = response.body.data.user;
-          app.post('/login')
-          .send({
-            username: testData.validUser.username,
-            password: testData.validUser.password
-          })
-          .end((err, res) => {
-            regularUserToken = res.body.data.token;
-            done();
-          });
-        });
-      });
-    }));
+    app.post('/login').send({
+      username: testData.adminUser.username,
+      password: testData.adminUser.password
+    })
+    .then((res) => {
+      adminToken = res.body.data.token;
+    })
+    .then(() => app.post('/api/v1/users').send(testData.validUser))
+    .then((response) => {
+      regularUser = response.body.data.user;
+    })
+    .then(() => app.post('/login').send({
+      username: testData.validUser.username,
+      password: testData.validUser.password
+    }))
+    .then((res) => {
+      regularUserToken = res.body.data.token;
+      return done();
+    });
   });
+
+  after(() => db.User.destroy({ where: { roleId: 1 } })
+    .then(() => db.Document.destroy({ where: {} })));
+
   describe('Create: ', () => {
     it('should create a new document', (done) => {
       app.post('/api/v1/documents')
@@ -54,13 +50,13 @@ describe('Document Api', () => {
       app.post('/api/v1/documents')
       .send(testData.userDocument)
       .set({ 'x-access-token': regularUserToken })
-        .end((error, response) => {
-          response.status.should.equal(400);
-          response.body.status.should.equal('fail');
-          response.body.message.should
-          .equal('badly formatted request body including ( mode )');
-          done();
-        });
+      .then((response) => {
+        response.status.should.equal(400);
+        response.body.status.should.equal('fail');
+        response.body.message.should
+        .equal('badly formatted request body including ( mode )');
+        done();
+      });
     });
 
     it('should send an error message for a user not logged in', (done) => {
@@ -299,10 +295,9 @@ larger than available data',
       app.get(`/api/v1/documents/user/${regularUser.id}?offset=9&limit=6`)
       .set({ 'x-access-token': adminToken })
         .end((error, response) => {
-          console.log(response.body)
           response.status.should.equal(404);
           response.body.status.should.equal('fail');
-          response.body.message.should.equal('No document found')
+          response.body.message.should.equal('No document found');
           done();
         });
     });
@@ -319,7 +314,7 @@ larger than available data',
         });
     });
 
-     it('should all public documents of a particular user',
+    it('should all public documents of a particular user',
     (done) => {
       app.get(`/api/v1/documents/user/${regularUser.id}?access=public`)
       .set({ 'x-access-token': adminToken })
@@ -525,7 +520,7 @@ alpha-numeric characters.');
 
     it(`should return error if
     user is not an admin or the owner of the document`, (done) => {
-      app.get(`/api/v1/documents/user/1`)
+      app.get('/api/v1/documents/user/1')
       .set({ 'x-access-token': regularUserToken })
         .end((error, response) => {
           response.status.should.equal(401);

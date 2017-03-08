@@ -3,16 +3,11 @@ import db     from '../../server/models';
 
 const app = helper.app;
 const testData = helper.testData;
+let regularUser, adminToken, regularUserToken;
+
 
 describe('Users:', () => {
-  let regularUser, adminToken, regularUserToken;
-  before((done) => {
-    db.User.destroy({
-      where: {
-        roleId: 1
-      }
-    }).then(() => done());
-  });
+  after(() => db.User.destroy({ where: { roleId: 1 } }));
 
   describe('Create Regular User', () => {
     it('Should return http code 201 if a Regular User is created', (done) => {
@@ -921,4 +916,3 @@ Not found`);
     });
   });
 });
-

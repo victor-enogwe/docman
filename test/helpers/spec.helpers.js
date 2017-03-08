@@ -1,4 +1,7 @@
 import faker  from 'Faker';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const testData = {
   validUser: {
@@ -14,7 +17,8 @@ const testData = {
     firstname: process.env.ADMIN_FIRSTNAME,
     lastname: process.env.ADMIN_LASTNAME,
     email: process.env.ADMIN_EMAIL,
-    password: process.env.ADMIN_PASSWORD
+    password: process.env.ADMIN_PASSWORD,
+    password_confirmation: process.env.ADMIN_PASSWORD,
   },
   userDocument: {
     title: faker.Lorem.sentence(),
