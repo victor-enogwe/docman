@@ -9,4 +9,4 @@ Document Management System provides a restful API for users to create and manage
 
 ## API Documentation Link
 
-- [a link](https://andela-venogwe.github.io/docman/staging/docs/index.html)
+- [a link](https://github.com/andela-venogwe/docman/staging/docs/index.html)
