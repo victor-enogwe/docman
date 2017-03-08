@@ -135,9 +135,7 @@ be 3 - 40 characters long.');
     });
 
     it('Should only allow usernames having less than 40 characters', (done) => {
-      testData.validUser.username = 'iammorethan20charactersofcoursedothidagai\
-nandagainandIthinkthiiammorethan20charactersofcoursedothidagainandagainandIthi\
-nkthi';
+      testData.validUser.username = testData.longTitle;
       app.post('/api/v1/users')
       .send(testData.validUser)
       .end((error, response) => {
@@ -166,9 +164,7 @@ nkthi';
 
     it('Should only allow firstnames having less than 40 characters',
     (done) => {
-      testData.validUser.firstname = 'iammorethan20charactersofcoursedothidagai\
-nandagainandIthinkthiiammorethan20charactersofcoursedothidagainandagainandIthi\
-nkthi';
+      testData.validUser.firstname = testData.longTitle;
       app.post('/api/v1/users')
       .send(testData.validUser)
       .end((error, response) => {
@@ -196,9 +192,7 @@ nkthi';
 
     it('Should only allow lastnames having less than 40 characters',
     (done) => {
-      testData.validUser.lastname = 'iammorethan20charactersofcoursedothidagai\
-nandagainandIthinkthiiammorethan20charactersofcoursedothidagainandagainandIthi\
-nkthi';
+      testData.validUser.lastname = testData.longTitle;
       app.post('/api/v1/users')
       .send(testData.validUser)
       .end((error, response) => {
@@ -227,11 +221,7 @@ nkthi';
 
     it('Should only allow emails less than 254 characters',
     (done) => {
-      testData.validUser.email = 'rNwj0DTYKDtgutzStfGsBpBiQK3ZZoM1eNlMBamT36Ee\
-6wPrt6vZPgPMjrCurSpoFkFCIqQQBoyrOh9D4zSzcKFAYoVY3LG9h8hTWuJo5nz6huPibG1pZJTgfz\
-jNpWiAgO1GQZL94s8pwWkPURfmReJYbjM5tV4wbJgg1XpCqJs5BYHR8xxceyErcbzrvyAngOyBsSKa\
-IESk29cuhEQTHhMy0FuZ1lSiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6\
-ORw725yayXevXWLbAMp@yahoo.com';
+      testData.validUser.email = testData.longTitle;
       app.post('/api/v1/users')
       .send(testData.validUser)
       .end((error, response) => {

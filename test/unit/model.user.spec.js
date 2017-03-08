@@ -42,9 +42,7 @@ describe('User Model: ', () => {
       });
 
       it('should not allow usernames longer than 40 characters', (done) => {
-        testData.adminUser.username = 'iammorethan20charactersofcoursedothidag\
-nandagainandIthinkthiiammorethan20charactersofcoursedothidagainandagainandIthi\
-nkthi';
+        testData.adminUser.username = testData.longTitle;
         userModel.create(testData.adminUser).catch((error) => {
           error.errors[0].message.should
           .equal('Username must start with a letter, have no spaces, and be \
@@ -78,9 +76,7 @@ nkthi';
 
       it('should not allow firstnames longer than 40 characters', (done) => {
         userModel.create(testData.adminUser).catch((error) => {
-          testData.adminUser.firstname = 'iammorethan20charactersofcoursedothd\
-nandagainandIthinkthiiammorethan20charactersofcoursedothidagainandagaissnandIi\
-nkthi';
+          testData.adminUser.firstname = testData.longTitle;
           error.errors[0].message.should
           .equal('Firstname must start with a letter, have no spaces, and be \
 3 - 40 characters long.');
@@ -123,9 +119,7 @@ nkthi';
       });
 
       it('should not allow lastnames longer than 40 characters', (done) => {
-        testData.adminUser.lastname = 'iammorethan20charactersofcoursedothidag\
-nandagainandIthinkthiiammorethan20charactersofcoursedothidagainandagainandIthi\
-nkthiddd';
+        testData.adminUser.lastname = testData.longTitle;
         userModel.create(testData.adminUser).catch((error) => {
           error.errors[0].message.should
           .equal('Lastname must start with a letter, have no spaces, and be \
@@ -165,11 +159,7 @@ nkthiddd';
       });
 
       it('should not allow emails longer than 254 characters', (done) => {
-        testData.adminUser.email = 'rNwj0DTYKDtgutzStfGsBpBiQK3ZZoM1eNlMBamT36\
-6wPrt6vZPgPMjrCurSpoFkFCIqQQBoyrOh9D4zSzcKFAYoVY3LG9h8hTWuJo5nz6huPibG1pZJTgfz\
-jNpWiAgO1GQZL94s8pwWkPURfmReJYbjM5tV4wbJgg1XpCqJs5BYHR8xxceyErcbzrvyAngOyBsSKa\
-IESk29cuhEQTHhMy0FuZ1lSiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6\
-ORw725yayXevXWLbAMp@yahoo.com';
+        testData.adminUser.email = testData.longEmail;
         userModel.create(testData.adminUser).catch((error) => {
           error.errors[0].message.should
           .equal('The email you entered is invalid  and longer \

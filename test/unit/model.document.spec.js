@@ -41,11 +41,7 @@ describe('Document Model: ', () => {
           error.errors[0].message.should
           .equal('The document title must start with a letter and be \
 3 - 255 characters long can also contain spaces or hyphens.');
-          testData.userDocument.title = 'rNwj0DTYKDtgutzStfGsBpBiQK3ZZoM1eNlMB\
-6wPrt6vZPgPMjrCurSpoFkFCIqQQBoyrOh9D4zSzcKFAYoVY3LG9h8hTWuJo5nz6huPibG1pZJTgfz\
-jNpWiAgO1GQZL94s8pwWkPURfmReJYbjM5tV4wbJgg1XpCqJs5BYHR8xxceyErcbzrvyAngOyBsSKa\
-IESk29cuhEQTHhMy0FuZ1lSiUrUTXIrpEHVG9isLTNSNjLl14iFjaefKGlIEK7AHp3PK1J5GWlP6C6\
-ORw725yayXevXWLbAMpgghghghghghghghghhghhghghhghgghghghghghghghghhghghghghghgh';
+          testData.userDocument.title = testData.longTitle;
           done();
         });
       });
