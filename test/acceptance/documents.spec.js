@@ -8,24 +8,26 @@ let regularUser, adminToken, regularUserToken, privateDocument, publicDocument;
 describe('Document Api', () => {
   before((done) => {
     db.sequelize.sync()
-    .then(() => app.post('/login').send({
-      username: testData.adminUser.username,
-      password: testData.adminUser.password
-    }))
-    .then((res) => {
-      adminToken = res.body.data.token;
-    })
-    .then(() => app.post('/api/v1/users').send(testData.validUser))
-    .then((response) => {
-      regularUser = response.body.data.user;
-    })
-    .then(() => app.post('/login').send({
-      username: testData.validUser.username,
-      password: testData.validUser.password
-    }))
-    .then((res) => {
-      regularUserToken = res.body.data.token;
-      return done();
+    .then(() => {
+      app.post('/login').send({
+        username: testData.adminUser.username,
+        password: testData.adminUser.password
+      })
+      .then((res) => {
+        adminToken = res.body.data.token;
+      })
+      .then(() => app.post('/api/v1/users').send(testData.validUser))
+      .then((response) => {
+        regularUser = response.body.data.user;
+      })
+      .then(() => app.post('/login').send({
+        username: testData.validUser.username,
+        password: testData.validUser.password
+      }))
+      .then((res) => {
+        regularUserToken = res.body.data.token;
+        return done();
+      });
     });
   });
 
