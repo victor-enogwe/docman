@@ -24,8 +24,8 @@ describe('Document Api', () => {
     }))
     .then((res) => {
       regularUserToken = res.body.data.token;
-      done();
-    });
+    })
+    .then(() => done());
   });
 
   after(() => db.User.destroy({ where: { roleId: 1 } })
