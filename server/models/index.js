@@ -2,10 +2,11 @@ import Sequelize   from 'sequelize';
 import fs          from 'fs';
 import config      from '../../config/db.env.config';
 
+const environment = process.env.NODE_ENV ? `_${process.env.NODE_ENV}` : '';
 const host = config.host;
 const user = config.user;
 const password = config.password;
-const database = config.database;
+const database = `${config.database}${environment}`;
 const port = config.port;
 const dialect = config.dialect;
 const db = {};
