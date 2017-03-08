@@ -20,4 +20,5 @@ ratings:
 exclude_paths:
 - config/
 - test/
-- node_modules/**/*
+- node_modules/
+- docs/
