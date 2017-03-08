@@ -24,7 +24,7 @@ describe('Document Api', () => {
     }))
     .then((res) => {
       regularUserToken = res.body.data.token;
-      return done();
+      done();
     });
   });
 

@@ -33,7 +33,7 @@ describe('Search', () => {
             .then(() => {
               testData.userDocument.access = 'public';
               db.Document.create(testData.userDocument)
-              .then(() => done());
+              .then(() => { done(); });
             });
           });
         });
