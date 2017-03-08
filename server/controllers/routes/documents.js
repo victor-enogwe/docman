@@ -6,7 +6,7 @@ import utils      from '../middlewares/utils';
 const documents = express.Router();
 
 documents.use(auth.checkToken);
-/* GET users listing. */
+/* GET documents listing. */
 documents.get('/', auth.isAdmin, utils.setQueryParameters, Documents.findAll);
 documents.get('/:id', utils.isValidRequestId, Documents.findOne);
 documents.get('/user/:id', utils.isValidRequestId,
