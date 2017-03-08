@@ -9,7 +9,7 @@
     "test:watch": "NODE_ENV=test istanbul cover _mocha -- test/**/*.spec.js --compilers js:babel-core/register --timeout 30000 --watch",
     "test": "NODE_ENV=test rimraf dist/ && istanbul cover _mocha -- test/**/*.spec.js --compilers js:babel-core/register --timeout 30000",
     "coveralls": "npm test && cat ./coverage/lcov.info | coveralls",
-    "document": "rimraf docs/ && jsdoc ./app.js -r -c ./conf.json --destination docs"
+    "document": "rimraf docs/ && jsdoc ./app.js -r -c ./conf.json --readme ./config/README.md --destination docs"
   },
   "dependencies": {
     "babel-cli": "^6.9.0",
