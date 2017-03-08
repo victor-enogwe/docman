@@ -7,7 +7,7 @@ let regularUser, adminToken, regularUserToken, privateDocument, publicDocument;
 
 describe('Document Api', () => {
   before((done) => {
-    db.sequelize.sync()
+    db.sequelize.authenticate()
     .then(() => {
       app.post('/login').send({
         username: testData.adminUser.username,
