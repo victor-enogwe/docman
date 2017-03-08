@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build:dist": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./tests,./coverage,",
+    "build:dist": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./test,./coverage,docs",
     "dev": "babel-watch app.js",
     "start": "npm run build:dist && node dist/app.js",
     "test:watch": "NODE_ENV=test istanbul cover _mocha -- test/**/*.spec.js --compilers js:babel-core/register --timeout 30000 --watch",
