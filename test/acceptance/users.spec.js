@@ -1,5 +1,5 @@
 import helper from '../helpers/index.helpers';
-import db     from '../../server/models';
+import database     from '../../server/models';
 
 const app = helper.app;
 const testData = helper.testData;
@@ -7,7 +7,7 @@ let regularUser, adminToken, regularUserToken;
 
 
 describe('Users:', () => {
-  after(() => db.User.destroy({ where: { roleId: 1 } }));
+  after(() => database.then(db => db.User.destroy({ where: { roleId: 1 } })));
 
   describe('Create Regular User', () => {
     it('Should return http code 201 if a Regular User is created', (done) => {

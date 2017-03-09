@@ -1,5 +1,5 @@
 import helper from '../helpers/index.helpers';
-import db     from '../../server/models/index';
+import database     from '../../server/models/index';
 
 const app = helper.app;
 const testData = helper.testData;
@@ -7,7 +7,8 @@ let regularUser, adminToken, regularUserToken, privateDocument, publicDocument;
 
 describe('Document Api', () => {
   before((done) => {
-    db.sequelize.sync()
+    database
+    .then(db => db.sequelize.sync())
     .then(() => app.post('/login').send({
       username: testData.adminUser.username,
       password: testData.adminUser.password
@@ -29,8 +30,9 @@ describe('Document Api', () => {
     .then(() => done()));
   });
 
-  after(() => db.User.destroy({ where: { roleId: 1 } })
-    .then(() => db.Document.destroy({ where: {} })));
+  after(() => database
+  .then(db => db.User.destroy({ where: { roleId: 1 } })
+  .then(() => db.Document.destroy({ where: {} }))));
 
   describe('Create: ', () => {
     it('should create a new document', (done) => {

@@ -1,10 +1,8 @@
 import jwt         from 'jsonwebtoken';
-import db          from '../../models/';
+import database    from '../../models/';
 import { decrypt } from '../middlewares/encrypt';
 import validate    from '../middlewares/validate';
 import utils       from '../middlewares/utils';
-
-const userModel = db.User;
 
 export default {
   /**
@@ -34,7 +32,9 @@ export default {
           message: 'Failed to authenticate token.'
         });
       }
-      return userModel.findById(decoded.id).then((user) => {
+      return database
+      .then(db => db.User.findById(decoded.id))
+      .then((user) => {
         if (!user) {
           return res.status(404).json({
             status: 'fail',

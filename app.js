@@ -6,10 +6,8 @@ import logger     from 'morgan';
 import Logger     from 'js-logger';
 import bodyParser from 'body-parser';
 import http       from 'http';
-import mysql      from 'promise-mysql';
 import bcrypt     from 'bcrypt-nodejs';
-import dbConfig   from './config/db.env.config';
-import db         from './server/models/';
+import database   from './server/models/';
 import Routes     from './server/controllers/routes/Routes';
 import query      from './config/query';
 
@@ -17,17 +15,7 @@ dotenv.config();
 debug('docman:app');
 Logger.useDefaults();
 
-const environment = process.env.NODE_ENV ? `_${process.env.NODE_ENV}` : '';
 const app = express();
-const dbHost = dbConfig.host;
-const dbUser = dbConfig.user;
-const dbPassword = dbConfig.password;
-const database = `${dbConfig.database}${environment}`;
-const dbConnection = mysql.createConnection({
-  host: dbHost,
-  user: dbUser,
-  password: dbPassword
-});
 
 /**
  * Normalize a port into a number, string, or false.
@@ -111,43 +99,40 @@ app.use('/api/v1/search', Routes.search);
 server.on('listening', onListening);
 server.on('error', onError);
 
-dbConnection.then(connection => connection
-.query(`CREATE DATABASE IF NOT EXISTS ${database}`))
-.then(() => Logger
-.warn('🚧 Initial Database Connection Successful. App Booting Up ...'))
-.then(() => db.sequelize.sync()
-.then(() => db.User.findOne({ where: {
-  $or: [{
-    username: process.env.ADMIN_USERNAME
-  }, { email: process.env.ADMIN_EMAIL }]
-} }))
-.then((userExists) => {
-  if (!userExists) {
-    return db.User.create({
-      roleId: 0,
-      username: process.env.ADMIN_USERNAME,
-      firstname: process.env.ADMIN_FIRSTNAME,
-      lastname: process.env.ADMIN_LASTNAME,
-      email: process.env.ADMIN_EMAIL,
-      password: process.env.ADMIN_PASSWORD,
-      password_confirmation: process.env.ADMIN_PASSWORD,
-      password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
-      bcrypt.genSaltSync(10)),
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    });
-  }
-})
-.then((user) => {
-  if (user) {
-    return db.Document.create(query.userDocument)
-    .then(() => db.sequelize.query(query.query, { raw: true }));
-  }
-}))
-.then(() => server.listen(port))
-.then(() => Logger
-.warn(`🚧 App is Listening on ${port}`))
-.catch(err => Logger.error(err));
+database.then((db) => {
+  db.sequelize.sync()
+  .then(() => db.User.findOne({ where: {
+    $or: [{
+      username: process.env.ADMIN_USERNAME
+    }, { email: process.env.ADMIN_EMAIL }]
+  } }))
+  .then((userExists) => {
+    if (!userExists) {
+      return db.User.create({
+        roleId: 0,
+        username: process.env.ADMIN_USERNAME,
+        firstname: process.env.ADMIN_FIRSTNAME,
+        lastname: process.env.ADMIN_LASTNAME,
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
+        password_confirmation: process.env.ADMIN_PASSWORD,
+        password_digest: bcrypt.hashSync(process.env.ADMIN_PASSWORD,
+        bcrypt.genSaltSync(10)),
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+    }
+  })
+  .then((user) => {
+    if (user) {
+      return db.sequelize.query(query.query, { raw: true });
+    }
+  })
+  .then(() => server.listen(port))
+  .then(() => Logger
+  .warn(`🚧 App is Listening on ${port}`))
+  .catch(err => Logger.error(err));
+});
 
 export default app;
 

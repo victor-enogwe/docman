@@ -1,9 +1,7 @@
-import db          from '../../models/';
+import database    from '../../models/';
 import { encrypt } from '../middlewares/encrypt';
 import validate    from '../middlewares/validate';
 import utils       from '../middlewares/utils';
-
-const userModel = db.User;
 
 /**
  * User controller object
@@ -16,7 +14,8 @@ const User = {
    * @returns {Object} response body
    */
   create(req, res) {
-    return userModel.create(req.body)
+    return database
+    .then(db => db.User.create(req.body))
     .then(user => res.status(201)
     .json({
       status: 'success',
@@ -35,7 +34,8 @@ const User = {
    * @returns {Object} response body
    */
   update(req, res) {
-    userModel.findById(req.params.id)
+    return database
+    .then(db => db.User.findById(req.params.id))
     .then((user) => {
       if (!user) {
         return utils.noUserFoundMessage(res);
@@ -59,7 +59,8 @@ const User = {
    * @returns {Object} response body
    */
   delete(req, res) {
-    userModel.findById(req.params.id)
+    return database
+    .then(db => db.User.findById(req.params.id))
     .then((user) => {
       if (!user) {
         return res.status(404).send({
@@ -82,11 +83,12 @@ const User = {
    * @returns {Object} response body
    */
   findAll(req, res) {
-    userModel.findAndCountAll({
+    return database
+    .then(db => db.User.findAndCountAll({
       attributes: validate.filterUserDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
-    })
+    }))
     .then((users) => {
       if (users.rows.length === 0) {
         return utils.noUserFoundMessage(res);
@@ -102,7 +104,8 @@ const User = {
    * @returns {Object} response body
    */
   findOne(req, res) {
-    userModel.findById(req.params.id)
+    return database
+    .then(db => db.User.findById(req.params.id))
     .then((user) => {
       if (!user) {
         return utils.noUserFoundMessage(res);
@@ -121,9 +124,10 @@ const User = {
    * @returns {Object} response body
    */
   login(req, res) {
-    userModel.findOne({ where: {
+    return database
+    .then(db => db.User.findOne({ where: {
       $or: [{ username: req.body.username }, { email: req.body.email }]
-    } })
+    } }))
     .then((user) => {
       if (!user) {
         return res.status(401).json({
@@ -155,7 +159,8 @@ const User = {
    * @returns {Object} response body
    */
   logout(req, res) {
-    userModel.findById(req.decoded.id)
+    return database
+    .then(db => db.User.findById(req.decoded.id))
     .then(user => user.update({ auth_token: '' }).then(() => res.status(200)
     .json({ status: 'success', message: 'you are now logged out' })));
   }

@@ -1,8 +1,5 @@
-import db          from '../../models/';
-import validate    from '../middlewares/validate';
-
-const searchDocuments = db.Document;
-const searchUsers = db.User;
+import database from '../../models/';
+import validate from '../middlewares/validate';
 
 export default {
 
@@ -13,12 +10,13 @@ export default {
    * @returns {Object} the response body
    */
   searchDocuments(req, res) {
-    return searchDocuments.findAndCountAll({
+    return database
+    .then(db => db.Document.findAndCountAll({
       where: req.query.search,
       attributes: validate.filterDocumentDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
-    })
+    }))
     .then((results) => {
       const userDocuments = [];
       if (req.decoded.roleId !== 0) {
@@ -42,12 +40,13 @@ export default {
    * @returns {Object} the response body
    */
   searchUsers(req, res) {
-    return searchUsers.findAndCountAll({
+    return database
+    .then(db => db.User.findAndCountAll({
       where: ['MATCH (username, email) AGAINST(?)', [req.query.user]],
       attributes: validate.filterUserDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
-    })
+    }))
     .then(results => validate.message(results, req, res));
   }
 };

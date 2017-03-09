@@ -1,21 +1,20 @@
 import helper from '../helpers/index.helpers';
-import db     from '../../server/models/index';
+import database     from '../../server/models/index';
 
 const app = helper.app;
 const testData = helper.testData;
 
-const documentModel = db.Document;
-
 describe('Document Model: ', () => {
   before((done) => { app.get('/').then(() => done()); });
 
-  after(() => db.Document.destroy({ where: {} }));
+  after(() => database.then(db => db.Document.destroy({ where: {} })));
 
   describe('Validations: ', () => {
     describe('CreatorId: ', () => {
       it('should be a number', (done) => {
         testData.userDocument.creatorId = 'a';
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('creatorId must be a number');
           testData.userDocument.creatorId = 0;
@@ -27,7 +26,8 @@ describe('Document Model: ', () => {
     describe('Title: ', () => {
       it('should not allow titles that start without a letter', (done) => {
         testData.userDocument.title = '2cent is';
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('The document title must start with a letter and be \
 3 - 255 characters long can also contain spaces or hyphens.');
@@ -37,7 +37,8 @@ describe('Document Model: ', () => {
       });
 
       it('should not allow titles shorter than three characters', (done) => {
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('The document title must start with a letter and be \
 3 - 255 characters long can also contain spaces or hyphens.');
@@ -47,7 +48,8 @@ describe('Document Model: ', () => {
       });
 
       it('should not allow titles longer than 255 characters', (done) => {
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('The document title must start with a letter and be \
 3 - 255 characters long can also contain spaces or hyphens.');
@@ -60,7 +62,8 @@ describe('Document Model: ', () => {
     describe('Excerpt: ', () => {
       it('should only contain alpha-numeric characters', (done) => {
         testData.userDocument.excerpt = '!¬¬¬¬¬¬¬¬¬';
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('The excerpt should only contain alpha-numeric characters.');
           testData.userDocument.excerpt = 'hello world is a default string';
@@ -72,7 +75,8 @@ describe('Document Model: ', () => {
     describe('Content: ', () => {
       it('should not allow empty document contents', (done) => {
         testData.userDocument.content = '';
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('Content  cannot be empty');
           testData.userDocument.content = '¬¬¬¬¬¬¬¬¬¬¬¬';
@@ -81,7 +85,8 @@ describe('Document Model: ', () => {
       });
 
       it('should only allow alpha-numeric characters in content', (done) => {
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('The content should only contain alpha-numeric characters.');
           testData.userDocument.content = 'hello world is a default string';
@@ -94,7 +99,8 @@ describe('Document Model: ', () => {
     describe('Access: ', () => {
       it('should only allow public, private, or users in access field',
       (done) => {
-        documentModel.create(testData.userDocument).catch((error) => {
+        database.then(db => db.Document.create(testData.userDocument))
+        .catch((error) => {
           error.errors[0].message.should
           .equal('access can only be public, private or users');
           delete testData.userDocument.access;
@@ -109,7 +115,7 @@ describe('Document Model: ', () => {
     let newDocument;
     describe('Create', () => {
       it('should create a new document', (done) => {
-        documentModel.create(testData.userDocument)
+        database.then(db => db.Document.create(testData.userDocument))
         .then((document) => {
           newDocument = document.dataValues;
           document.dataValues.should.have.property('id').which.is.a.Number();
@@ -121,7 +127,7 @@ describe('Document Model: ', () => {
 
       it('should create a private document if access is not supplied',
       (done) => {
-        documentModel.create(testData.userDocument)
+        database.then(db => db.Document.create(testData.userDocument))
         .then((document) => {
           newDocument = document.dataValues;
           document.dataValues.should.have.property('id').which.is.a.Number();
@@ -134,7 +140,7 @@ describe('Document Model: ', () => {
 
     describe('Read: ', () => {
       it('should get user details', (done) => {
-        documentModel.findById(newDocument.id)
+        database.then(db => db.Document.findById(newDocument.id))
         .then((document) => {
           document.should.have.property('id').which.is.equal(newDocument.id);
           done();
@@ -144,7 +150,7 @@ describe('Document Model: ', () => {
 
     describe('Update: ', () => {
       it('should update a document', (done) => {
-        documentModel.findById(newDocument.id)
+        database.then(db => db.Document.findById(newDocument.id))
         .then((document) => {
           document.update({ title: 'updated document title' })
           .then((updatedDocument) => {
@@ -158,7 +164,8 @@ describe('Document Model: ', () => {
 
     describe('Delete: ', () => {
       it('should delete a document', (done) => {
-        documentModel.destroy({ where: { id: newDocument.id } })
+        database.then(db => db.Document
+        .destroy({ where: { id: newDocument.id } }))
         .then((deleted) => {
           deleted.should.equal(1);
           done();

@@ -1,8 +1,6 @@
-import db          from '../../models/';
-import validate    from '../middlewares/validate';
-import utils       from '../middlewares/utils';
-
-const documentModel = db.Document;
+import database from '../../models/';
+import validate from '../middlewares/validate';
+import utils    from '../middlewares/utils';
 
 const Documents = {
   /**
@@ -13,7 +11,8 @@ const Documents = {
    */
   create(req, res) {
     req.body.creatorId = req.decoded.id;
-    return documentModel.create(req.body)
+    return database
+    .then(db => db.Document.create(req.body))
     .then(document => res.status(201)
     .json({
       status: 'success',
@@ -28,7 +27,8 @@ const Documents = {
    * @returns {Object} the response body
    */
   update(req, res) {
-    documentModel.findById(req.params.id)
+    return database
+    .then(db => db.Document.findById(req.params.id))
     .then((document) => {
       if (!document) {
         return res.status(404).send({
@@ -58,7 +58,8 @@ const Documents = {
    * @returns {Object} the response body
    */
   delete(req, res) {
-    documentModel.findById(req.params.id)
+    return database
+    .then(db => db.Document.findById(req.params.id))
     .then((document) => {
       if (!document) {
         return res.status(404).send({
@@ -84,14 +85,15 @@ const Documents = {
    * @returns {Object} the response body
    */
   findAll(req, res) {
-    documentModel.findAndCountAll({
+    return database
+    .then(db => db.Document.findAndCountAll({
       attributes: validate.filterDocumentDetails(),
       offset: req.query.offset,
       limit: req.query.limit,
       where: validate.filterDocumentsByAccess(req.query.access) ? {
         access: req.query.access
       } : {}
-    })
+    }))
     .then((documents) => {
       if (documents.rows.length === 0) {
         return utils.documentsNotFoundMessage(res);
@@ -107,7 +109,8 @@ const Documents = {
    * @returns {Object} the response body
    */
   findOne(req, res) {
-    documentModel.findById(req.params.id)
+    return database
+    .then(db => db.Document.findById(req.params.id))
     .then((document) => {
       if (!document) {
         return utils.documentsNotFoundMessage(res);
@@ -139,11 +142,12 @@ const Documents = {
         access
       };
     } else { theFilter = { creatorId: req.params.id }; }
-    documentModel.findAndCountAll({ where: theFilter,
+    return database
+    .then(db => db.Document.findAndCountAll({ where: theFilter,
       attributes: validate.filterDocumentDetails(),
       offset: req.query.offset,
       limit: req.query.limit
-    })
+    }))
     .then((documents) => {
       if (documents.count === 0 || documents.rows.length === 0) {
         return utils.documentsNotFoundMessage(res);

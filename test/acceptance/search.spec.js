@@ -1,5 +1,5 @@
 import helper from '../helpers/index.helpers';
-import db     from '../../server/models';
+import database     from '../../server/models';
 
 const app = helper.app;
 const testData = helper.testData;
@@ -15,25 +15,28 @@ describe('Search', () => {
     .then((response) => {
       adminToken = response.body.data.token;
       testData.userDocument.creatorId = 1;
-      db.Document.create(testData.userDocument)
-      .then(() => {
-        app.post('/api/v1/users')
-        .send(testData.validUser)
-        .then((res) => {
-          regularUser = res.body.data.user;
-          app.post('/login')
-          .send({
-            username: testData.validUser.username,
-            password: testData.validUser.password
-          })
+      database
+      .then((db) => {
+        db.Document.create(testData.userDocument)
+        .then(() => {
+          app.post('/api/v1/users')
+          .send(testData.validUser)
           .then((res) => {
-            regularUserToken = res.body.data.token;
-            testData.userDocument.creatorId = regularUser.id;
-            db.Document.create(testData.userDocument)
-            .then(() => {
-              testData.userDocument.access = 'public';
+            regularUser = res.body.data.user;
+            app.post('/login')
+            .send({
+              username: testData.validUser.username,
+              password: testData.validUser.password
+            })
+            .then((res) => {
+              regularUserToken = res.body.data.token;
+              testData.userDocument.creatorId = regularUser.id;
               db.Document.create(testData.userDocument)
-              .then(() => done());
+              .then(() => {
+                testData.userDocument.access = 'public';
+                db.Document.create(testData.userDocument)
+                .then(() => done());
+              });
             });
           });
         });
@@ -41,8 +44,9 @@ describe('Search', () => {
     });
   });
 
-  after(() => db.User.destroy({ where: { roleId: 1 } })
-  .then(() => db.Document.destroy({ where: {} })));
+  after(() => database
+  .then(db => db.User.destroy({ where: { roleId: 1 } })
+  .then(() => db.Document.destroy({ where: {} }))));
 
   describe('Documents: ', () => {
     it('should return documents for search', (done) => {
