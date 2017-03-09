@@ -13,9 +13,6 @@ cache:
 services:
   - mysql
 
-before_install:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS docman_test;'
-
 install:
   - npm i -g npm@latest
   - npm install
